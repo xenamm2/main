@@ -1,0 +1,34 @@
+local placeId = game.PlaceId
+
+local scripts = {
+    [142823291] = [[
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
+    ]],
+
+    [8737899170] = [[
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
+    ]],
+
+    [920587237] = [[
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
+    ]],
+
+    [126884695634066] = [[
+        -- Gag Script
+        print("Gag script loaded")
+        -- Your script content here
+    ]],
+
+    default = [[
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
+    ]]
+}
+
+local scriptToRun = scripts[placeId] or scripts.default
+local success, err = pcall(function()
+    loadstring(scriptToRun)()
+end)
+
+if not success then
+    warn("Failed to run script: " .. tostring(err))
+end
