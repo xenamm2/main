@@ -14,9 +14,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/hea
     ]],
 
     [126884695634066] = [[
-        -- Gag Script
-        print("Gag script loaded")
-        -- Your script content here
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
     ]],
 
     default = [[
