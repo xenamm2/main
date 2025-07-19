@@ -2,15 +2,15 @@ local placeId = game.PlaceId
 
 local scripts = {
     [142823291] = [[
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/epik"))()
     ]],
 
     [8737899170] = [[
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/epik"))()
     ]],
 
     [920587237] = [[
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/epik"))()
     ]],
 
     [126884695634066] = [[
