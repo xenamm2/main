@@ -14,11 +14,13 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/hea
     ]],
 
     [126884695634066] = [[
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/epik"))()
+loadstring(game:HttpGet("https://pastefy.app/yjwEgf3G/raw"))
     ]],
 
     default = [[
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
+loadstring(game:HttpGet("https://pastefy.app/yjwEgf3G/raw"))()
     ]]
 }
 
