@@ -20,7 +20,6 @@ loadstring(game:HttpGet("https://pastefy.app/yjwEgf3G/raw"))
 
     default = [[
 loadstring(game:HttpGet("https://pastebin.com/raw/Q7F1uSvy"))()
-loadstring(game:HttpGet("https://pastefy.app/yjwEgf3G/raw"))()
     ]]
 }
 
