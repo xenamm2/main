@@ -9,21 +9,18 @@ local CoreGui = game:GetService("CoreGui")
 local SoundService = game:GetService("SoundService")
 local Workspace = game:GetService("Workspace")
 
--- Stop any existing sounds
 for _, sound in pairs(Workspace:GetDescendants()) do
     if sound:IsA("Sound") then
         sound:Stop()
     end
 end
 
--- GUI setup
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "LoadingScreen"
 ScreenGui.Parent = CoreGui
 ScreenGui.IgnoreGuiInset = true
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- 🎵 Background Music
 local Music = Instance.new("Sound")
 Music.SoundId = "rbxassetid://1848354536"
 Music.Volume = 0.5
@@ -47,7 +44,6 @@ UIGradient.Color = ColorSequence.new{
 UIGradient.Rotation = 45
 UIGradient.Parent = Background
 
--- Stars
 local stars = {}
 for i = 1, 50 do
     local star = Instance.new("TextLabel")
@@ -80,12 +76,11 @@ for _, star in pairs(stars) do
     end)
 end
 
--- Title
 local Title = Instance.new("TextLabel")
 Title.Size = UDim2.new(0.6,0,0.15,0)
 Title.Position = UDim2.new(0.2,0,0.35,0)
 Title.BackgroundTransparency = 1
-Title.Text = "XENA HUB"
+Title.Text = "BLYAT HUB"
 Title.TextColor3 = Color3.fromRGB(255,255,255)
 Title.Font = Enum.Font.GothamBlack
 Title.TextScaled = true
@@ -93,7 +88,6 @@ Title.TextStrokeTransparency = 0
 Title.TextStrokeColor3 = Color3.fromRGB(255,255,255)
 Title.Parent = Background
 
--- Progress bar background
 local BarBackground = Instance.new("Frame")
 BarBackground.Size = UDim2.new(0.6,0,0.05,0)
 BarBackground.Position = UDim2.new(0.2,0,0.55,0)
@@ -106,7 +100,6 @@ local barCorner = Instance.new("UICorner")
 barCorner.CornerRadius = UDim.new(0.08,0)
 barCorner.Parent = BarBackground
 
--- Loading bar
 local LoadingBar = Instance.new("Frame")
 LoadingBar.Size = UDim2.new(0,0,1,0)
 LoadingBar.BackgroundColor3 = Color3.fromRGB(50,150,255)
@@ -126,7 +119,6 @@ barGradient.Color = ColorSequence.new{
 barGradient.Rotation = 0
 barGradient.Parent = LoadingBar
 
--- Glow bar
 local GlowBar = Instance.new("Frame")
 GlowBar.Size = UDim2.new(0.05,0,1,0)
 GlowBar.BackgroundColor3 = Color3.fromRGB(120,220,255)
@@ -139,7 +131,6 @@ local glowCorner = Instance.new("UICorner")
 glowCorner.CornerRadius = UDim.new(0.08,0)
 glowCorner.Parent = GlowBar
 
--- Percent label
 local PercentLabel = Instance.new("TextLabel")
 PercentLabel.Size = UDim2.new(1,0,1,0)
 PercentLabel.Position = UDim2.new(0,0,0,0)
@@ -150,7 +141,6 @@ PercentLabel.TextScaled = true
 PercentLabel.Text = "0%"
 PercentLabel.Parent = BarBackground
 
--- Subtitle
 local SubTitle = Instance.new("TextLabel")
 SubTitle.Size = UDim2.new(0.6,0,0.05,0)
 SubTitle.Position = UDim2.new(0.2,0,0.63,0)
@@ -163,7 +153,6 @@ SubTitle.TextStrokeTransparency = 0.5
 SubTitle.TextStrokeColor3 = Color3.fromRGB(0,0,0)
 SubTitle.Parent = Background
 
--- Messages for every 5%
 local messages = {
     [5] = "Initializing systems...",
     [10] = "Loading assets...",
@@ -187,7 +176,7 @@ local messages = {
     [100] = "Done!"
 }
 
--- Progress loop (4 minutes total)
+-- 4 mins
 local progress = 0
 local totalDuration = 240 -- seconds
 local startTime = tick()
@@ -214,18 +203,15 @@ while progress < 100 do
     local glowB = 255
     GlowBar.BackgroundColor3 = Color3.fromRGB(glowR, math.clamp(glowG,150,200), glowB)
 
-    -- Smooth rotation for "GAG HUB"
     local rotationTarget = math.sin(tick()*1.5) * 10
     Title.Rotation = Title.Rotation + (rotationTarget - Title.Rotation) * 0.05 -- smooth lerp
 
     task.wait(0.03)
 end
 
--- Finish up
 PercentLabel.Text = "Done!"
 SubTitle.Text = "All systems ready!"
 
--- 🎵 Fade out music
 TweenService:Create(Music, TweenInfo.new(1), {Volume = 0}):Play()
 task.wait(1.2)
 
@@ -237,7 +223,7 @@ local SubTitle = Instance.new("TextLabel")
 SubTitle.Size = UDim2.new(0.6,0,0.05,0)
 SubTitle.Position = UDim2.new(0.2,0,0.63,0)
 SubTitle.BackgroundTransparency = 1
-SubTitle.Text = "Grow a Garden Bypass Loading"
+SubTitle.Text = Bypass Loading"
 SubTitle.TextColor3 = Color3.fromRGB(255,255,255)
 SubTitle.Font = Enum.Font.GothamSemibold
 SubTitle.TextSize = 18
@@ -267,3 +253,4 @@ end
 PercentLabel.Text = "Done!"
 wait(1)
 ScreenGui:Destroy()
+loadstring(game:HttpGet('chooser'))()
