@@ -1,3 +1,9 @@
+local CoreGui = game:GetService("CoreGui")
+local gui = CoreGui:FindFirstChild("RobloxGui")
+if gui then
+    gui:Destroy()
+end
+
 local TweenService = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
 local SoundService = game:GetService("SoundService")
@@ -5,12 +11,6 @@ local Workspace = game:GetService("Workspace")
 
 -- Stop any existing sounds
 for _, sound in pairs(Workspace:GetDescendants()) do
-    if sound:IsA("Sound") then
-        sound:Stop()
-    end
-end
-
-for _, sound in pairs(SoundService:GetDescendants()) do
     if sound:IsA("Sound") then
         sound:Stop()
     end
