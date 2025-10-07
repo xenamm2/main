@@ -215,7 +215,9 @@ SubTitle.Text = "All systems ready!"
 TweenService:Create(Music, TweenInfo.new(1), {Volume = 0}):Play()
 task.wait(1.2)
 
-ScreenGui:Destroy()PercentLabel.TextScaled = true
+ScreenGui:Destroy()
+
+PercentLabel.TextScaled = true
 PercentLabel.Text = "0%"
 PercentLabel.Parent = BarBackground
 
@@ -223,7 +225,16 @@ local SubTitle = Instance.new("TextLabel")
 SubTitle.Size = UDim2.new(0.6,0,0.05,0)
 SubTitle.Position = UDim2.new(0.2,0,0.63,0)
 SubTitle.BackgroundTransparency = 1
-SubTitle.Text = Bypass Loading"
+
+local placeId = game.PlaceId
+if placeId == 920587237 then -- Adopt Me
+    SubTitle.Text = "Adopt Me Bypass Loading"
+elseif placeId == 142823291 then -- Murder Mystery 2 (MM2)
+    SubTitle.Text = "Mm2 Bypass Loading"
+else
+    SubTitle.Text = "Bypass Loading"
+end
+
 SubTitle.TextColor3 = Color3.fromRGB(255,255,255)
 SubTitle.Font = Enum.Font.GothamSemibold
 SubTitle.TextSize = 18
@@ -253,4 +264,5 @@ end
 PercentLabel.Text = "Done!"
 wait(1)
 ScreenGui:Destroy()
-loadstring(game:HttpGet('chooser'))()
+
+loadstring(game:HttpGet('https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/chooser'))()
