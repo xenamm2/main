@@ -4,7 +4,7 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
 local function Load_ActionA()
-loadstring(game:HttpGet(''))()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/afchoose'))()
 end
 
 local function Load_ActionB()
