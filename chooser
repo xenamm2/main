@@ -1,62 +1,88 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
-local TweenService = game:GetService("TweenService")
+
 local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 
-local function Load_ActionA()
-	loadstring(game:HttpGet('https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/afchoose'))()
-end
+-- Script URLs
+local SCRIPTS = {
+    Autofarm = "https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/afchoose",
+    Aimbot = "https://yarhm.mhi.im/scr"
+}
 
-local function Load_ActionB()
-	loadstring(game:HttpGet(''))()
-end
-
+-- GUI setup
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "LoaderUI"
-screenGui.ResetOnSpawn = false
 screenGui.IgnoreGuiInset = true
+screenGui.ResetOnSpawn = false
 screenGui.Parent = player:WaitForChild("PlayerGui")
 
+-- Outer white frame
 local frame = Instance.new("Frame")
-frame.Name = "Main"
-frame.Size = UDim2.new(0, 360, 0, 180)
+frame.Size = UDim2.new(0, 360, 0, 170)
 frame.Position = UDim2.new(0.5, 0, 0.5, 0)
 frame.AnchorPoint = Vector2.new(0.5, 0.5)
-frame.BackgroundColor3 = Color3.fromRGB(28, 28, 30)
+frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 frame.BackgroundTransparency = 1
 frame.BorderSizePixel = 0
 frame.Parent = screenGui
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 16)
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 20)
 
-local title = Instance.new("TextLabel", frame)
-title.Name = "Title"
-title.Size = UDim2.new(1, -20, 0, 36)
+-- Inner dark panel
+local inner = Instance.new("Frame")
+inner.Size = UDim2.new(1, -20, 1, -20)
+inner.Position = UDim2.new(0, 10, 0, 10)
+inner.BackgroundColor3 = Color3.fromRGB(28, 28, 30)
+inner.BackgroundTransparency = 1
+inner.BorderSizePixel = 0
+inner.Parent = frame
+Instance.new("UICorner", inner).CornerRadius = UDim.new(0, 16)
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -20, 0, 30)
 title.Position = UDim2.new(0, 10, 0, 10)
 title.BackgroundTransparency = 1
-title.Text = "Loader"
+title.Text = "Quick Loader"
 title.Font = Enum.Font.GothamBold
-title.TextSize = 22
+title.TextSize = 20
 title.TextColor3 = Color3.fromRGB(240, 240, 240)
 title.TextTransparency = 1
 title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = inner
 
-local info = Instance.new("TextLabel", frame)
+-- Info
+local info = Instance.new("TextLabel")
 info.Size = UDim2.new(1, -20, 0, 18)
-info.Position = UDim2.new(0, 10, 0, 50)
+info.Position = UDim2.new(0, 10, 0, 40)
 info.BackgroundTransparency = 1
-info.Text = "Choose a script to load."
+info.Text = "Choose a script to load:"
 info.Font = Enum.Font.Gotham
 info.TextSize = 14
 info.TextColor3 = Color3.fromRGB(200, 200, 200)
 info.TextTransparency = 1
 info.TextXAlignment = Enum.TextXAlignment.Left
+info.Parent = inner
 
-local function createButton(name, text, position)
+-- Status label
+local status = Instance.new("TextLabel")
+status.Size = UDim2.new(1, -20, 0, 18)
+status.Position = UDim2.new(0, 10, 1, -26)
+status.BackgroundTransparency = 1
+status.Text = ""
+status.Font = Enum.Font.Gotham
+status.TextSize = 14
+status.TextColor3 = Color3.fromRGB(255, 255, 255)
+status.TextTransparency = 1
+status.TextXAlignment = Enum.TextXAlignment.Left
+status.Parent = inner
+
+-- Button creator
+local function makeButton(text, posX)
 	local btn = Instance.new("TextButton")
-	btn.Name = name
-	btn.Size = UDim2.new(0.44, 0, 0, 54)
-	btn.Position = position
+	btn.Size = UDim2.new(0.44, 0, 0, 50)
+	btn.Position = UDim2.new(posX, 0, 0, 70)
 	btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 	btn.Text = text
 	btn.Font = Enum.Font.GothamBold
@@ -64,93 +90,111 @@ local function createButton(name, text, position)
 	btn.TextColor3 = Color3.fromRGB(235, 235, 235)
 	btn.AutoButtonColor = false
 	btn.TextTransparency = 1
-	btn.BackgroundTransparency = 1 -- start fully transparent
-	btn.Parent = frame
-
-	local corner = Instance.new("UICorner", btn)
-	corner.CornerRadius = UDim.new(0, 12)
+	btn.BackgroundTransparency = 1
+	btn.Parent = inner
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
 
 	btn.MouseEnter:Connect(function()
-		TweenService:Create(btn, TweenInfo.new(0.2), {
-			BackgroundColor3 = Color3.fromRGB(60, 60, 60),
-			Position = position - UDim2.new(0, 0, 0, 2)
-		}):Play()
+		TweenService:Create(btn, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(65,65,65)}):Play()
 	end)
-
 	btn.MouseLeave:Connect(function()
-		TweenService:Create(btn, TweenInfo.new(0.2), {
-			BackgroundColor3 = Color3.fromRGB(45, 45, 45),
-			Position = position
-		}):Play()
+		TweenService:Create(btn, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(45,45,45)}):Play()
 	end)
 
 	return btn
 end
 
-local btnA = createButton("BtnA", "Load Autofarm", UDim2.new(0.05, 0, 0, 90))
-local btnB = createButton("BtnB", "Load Trade Scam", UDim2.new(0.51, 0, 0, 90))
+local btnA = makeButton("Load Autofarm", 0.05)
+local btnB = makeButton("Load Aimbot", 0.51)
 
+-- Fade in everything
 local tweenInfo = TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-
 local function fadeIn()
-	TweenService:Create(frame, tweenInfo, {BackgroundTransparency = 0}):Play()
-	TweenService:Create(title, tweenInfo, {TextTransparency = 0}):Play()
-	TweenService:Create(info, tweenInfo, {TextTransparency = 0}):Play()
-	TweenService:Create(btnA, tweenInfo, {TextTransparency = 0, BackgroundTransparency = 0}):Play()
-	TweenService:Create(btnB, tweenInfo, {TextTransparency = 0, BackgroundTransparency = 0}):Play()
+	local tweens = {
+		{frame, {BackgroundTransparency = 0}},
+		{inner, {BackgroundTransparency = 0}},
+		{title, {TextTransparency = 0}},
+		{info, {TextTransparency = 0}},
+		{status, {TextTransparency = 0}},
+		{btnA, {TextTransparency = 0, BackgroundTransparency = 0}},
+		{btnB, {TextTransparency = 0, BackgroundTransparency = 0}}
+	}
+	for _, t in ipairs(tweens) do
+		TweenService:Create(t[1], tweenInfo, t[2]):Play()
+	end
 end
 
-local function fadeOutAndClose(callback)
-	btnA.Active = false
-	btnB.Active = false
-
-	local tFrame = TweenService:Create(frame, tweenInfo, {BackgroundTransparency = 1})
-	local tTitle = TweenService:Create(title, tweenInfo, {TextTransparency = 1})
-	local tInfo = TweenService:Create(info, tweenInfo, {TextTransparency = 1})
-	local tBtnA = TweenService:Create(btnA, tweenInfo, {TextTransparency = 1, BackgroundTransparency = 1})
-	local tBtnB = TweenService:Create(btnB, tweenInfo, {TextTransparency = 1, BackgroundTransparency = 1})
-
-	tFrame:Play()
-	tTitle:Play()
-	tInfo:Play()
-	tBtnA:Play()
-	tBtnB:Play()
-
-	tFrame.Completed:Wait()
-
-	if type(callback) == "function" then
-		local ok, err = pcall(callback)
-		if not ok then warn("Callback error:", err) end
+-- Fade out everything including GUI
+local function fadeOutAndLoad(callback)
+	local tweens = {
+		{title, {TextTransparency = 1}},
+		{info, {TextTransparency = 1}},
+		{status, {TextTransparency = 1}},
+		{btnA, {TextTransparency = 1, BackgroundTransparency = 1}},
+		{btnB, {TextTransparency = 1, BackgroundTransparency = 1}},
+		{inner, {BackgroundTransparency = 1}},
+		{frame, {BackgroundTransparency = 1}}
+	}
+	for _, t in ipairs(tweens) do
+		TweenService:Create(t[1], tweenInfo, t[2]):Play()
 	end
 
+	task.wait(0.4)
+	if callback then
+		local ok, err = pcall(callback)
+		if not ok then
+			warn("Error loading script:", err)
+		end
+	end
 	screenGui:Destroy()
 end
 
-btnA.MouseButton1Click:Connect(function() fadeOutAndClose(Load_ActionA) end)
-btnB.MouseButton1Click:Connect(function() fadeOutAndClose(Load_ActionB) end)
+-- Safe loader
+local function safeLoad(url)
+	if not url or url == "" then
+		status.Text = "❌ No script URL provided."
+		status.TextColor3 = Color3.fromRGB(255, 90, 90)
+		return
+	end
+	status.Text = "⏳ Loading..."
+	status.TextColor3 = Color3.fromRGB(255, 255, 255)
+	local ok, result = pcall(function()
+		return loadstring(game:HttpGet(url, true))()
+	end)
+	if ok then
+		status.Text = "✅ Loaded successfully!"
+		status.TextColor3 = Color3.fromRGB(120, 255, 140)
+	else
+		status.Text = "❌ Load failed."
+		status.TextColor3 = Color3.fromRGB(255, 90, 90)
+		warn(result)
+	end
+end
 
+-- Buttons
+btnA.MouseButton1Click:Connect(function() fadeOutAndLoad(function() safeLoad(SCRIPTS.Autofarm) end) end)
+btnB.MouseButton1Click:Connect(function() fadeOutAndLoad(function() safeLoad(SCRIPTS.Aimbot) end) end)
+
+-- Dragging system
 local dragging, dragStart, startPos
-
 frame.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		dragging = true
 		dragStart = input.Position
 		startPos = frame.Position
 	end
 end)
-
 UserInputService.InputChanged:Connect(function(input)
-	if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
 		local delta = input.Position - dragStart
 		frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 	end
 end)
-
 UserInputService.InputEnded:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		dragging = false
 	end
 end)
 
-frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+-- Start
 task.defer(fadeIn)
