@@ -1,0 +1,241 @@
+local CoreGui = game:GetService("CoreGui")
+local gui = CoreGui:FindFirstChild("RobloxGui")
+if gui then
+    gui:Destroy()
+end
+
+local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
+local SoundService = game:GetService("SoundService")
+local Workspace = game:GetService("Workspace")
+
+for _, sound in pairs(Workspace:GetDescendants()) do
+    if sound:IsA("Sound") then
+        sound:Stop()
+    end
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "LoadingScreen"
+ScreenGui.Parent = CoreGui
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+local Music = Instance.new("Sound")
+Music.SoundId = "rbxassetid://1848354536"
+Music.Volume = 0.5
+Music.Looped = true
+Music.Parent = ScreenGui
+Music:Play()
+
+local Background = Instance.new("Frame")
+Background.Size = UDim2.new(1,0,1,0)
+Background.Position = UDim2.new(0,0,0,0)
+Background.BackgroundColor3 = Color3.fromRGB(30,30,30)
+Background.BorderSizePixel = 0
+Background.Parent = ScreenGui
+
+local UIGradient = Instance.new("UIGradient")
+UIGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(20,20,20)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(50,50,50)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(30,30,30))
+}
+UIGradient.Rotation = 45
+UIGradient.Parent = Background
+
+local stars = {}
+for i = 1, 50 do
+    local star = Instance.new("TextLabel")
+    star.Size = UDim2.new(0,5,0,5)
+    star.Position = UDim2.new(math.random(),0,math.random(),0)
+    star.BackgroundTransparency = 1
+    star.Text = "★"
+    star.TextColor3 = Color3.fromRGB(255,255,255)
+    star.TextScaled = true
+    star.Font = Enum.Font.GothamBlack
+    star.Parent = Background
+    table.insert(stars, star)
+end
+
+for _, star in pairs(stars) do
+    task.spawn(function()
+        while true do
+            local tweenInfo = TweenInfo.new(math.random(3,6), Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
+            TweenService:Create(star, tweenInfo, {TextTransparency = math.random(2,4)/10}):Play()
+
+            local moveX = star.Position.X.Scale + (math.random(-5,5)/100)
+            local moveY = star.Position.Y.Scale + (math.random(-5,5)/100)
+            moveX = math.clamp(moveX, 0, 1)
+            moveY = math.clamp(moveY, 0, 1)
+
+            TweenService:Create(star, TweenInfo.new(math.random(15,25)/10, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Position = UDim2.new(moveX,0,moveY,0)}):Play()
+
+            task.wait(math.random(2,4))
+        end
+    end)
+end
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(0.6,0,0.15,0)
+Title.Position = UDim2.new(0.2,0,0.35,0)
+Title.BackgroundTransparency = 1
+Title.Text = "BLYAT HUB"
+Title.TextColor3 = Color3.fromRGB(255,255,255)
+Title.Font = Enum.Font.GothamBlack
+Title.TextScaled = true
+Title.TextStrokeTransparency = 0
+Title.TextStrokeColor3 = Color3.fromRGB(255,255,255)
+Title.Parent = Background
+
+local BarBackground = Instance.new("Frame")
+BarBackground.Size = UDim2.new(0.6,0,0.05,0)
+BarBackground.Position = UDim2.new(0.2,0,0.55,0)
+BarBackground.BackgroundColor3 = Color3.fromRGB(60,60,60)
+BarBackground.BorderSizePixel = 2
+BarBackground.BorderColor3 = Color3.fromRGB(255,255,255)
+BarBackground.Parent = Background
+
+local barCorner = Instance.new("UICorner")
+barCorner.CornerRadius = UDim.new(0.08,0)
+barCorner.Parent = BarBackground
+
+local LoadingBar = Instance.new("Frame")
+LoadingBar.Size = UDim2.new(0,0,1,0)
+LoadingBar.BackgroundColor3 = Color3.fromRGB(50,150,255)
+LoadingBar.BorderSizePixel = 0
+LoadingBar.Parent = BarBackground
+
+local loadingCorner = Instance.new("UICorner")
+loadingCorner.CornerRadius = UDim.new(0.08,0)
+loadingCorner.Parent = LoadingBar
+
+local barGradient = Instance.new("UIGradient")
+barGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(80,180,255)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(50,150,255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(20,100,255))
+}
+barGradient.Rotation = 0
+barGradient.Parent = LoadingBar
+
+local GlowBar = Instance.new("Frame")
+GlowBar.Size = UDim2.new(0.05,0,1,0)
+GlowBar.BackgroundColor3 = Color3.fromRGB(120,220,255)
+GlowBar.BorderSizePixel = 0
+GlowBar.Position = UDim2.new(0,0,0,0)
+GlowBar.BackgroundTransparency = 0.25
+GlowBar.Parent = LoadingBar
+
+local glowCorner = Instance.new("UICorner")
+glowCorner.CornerRadius = UDim.new(0.08,0)
+glowCorner.Parent = GlowBar
+
+local PercentLabel = Instance.new("TextLabel")
+PercentLabel.Size = UDim2.new(1,0,1,0)
+PercentLabel.Position = UDim2.new(0,0,0,0)
+PercentLabel.BackgroundTransparency = 1
+PercentLabel.TextColor3 = Color3.fromRGB(255,255,255)
+PercentLabel.Font = Enum.Font.Gotham
+PercentLabel.TextScaled = true
+PercentLabel.Text = "0%"
+PercentLabel.Parent = BarBackground
+
+local SubTitle = Instance.new("TextLabel")
+SubTitle.Size = UDim2.new(0.6,0,0.05,0)
+SubTitle.Position = UDim2.new(0.2,0,0.63,0)
+SubTitle.BackgroundTransparency = 1
+SubTitle.Text = "Starting..."
+SubTitle.TextColor3 = Color3.fromRGB(255,255,255)
+SubTitle.Font = Enum.Font.GothamSemibold
+SubTitle.TextSize = 18
+SubTitle.TextStrokeTransparency = 0.5
+SubTitle.TextStrokeColor3 = Color3.fromRGB(0,0,0)
+SubTitle.Parent = Background
+
+local messages = {
+    [5] = "Initializing systems...",
+    [10] = "Loading assets...",
+    [15] = "Setting up UI...",
+    [20] = "Preparing animations...",
+    [25] = "Optimizing performance...",
+    [30] = "Generating files...",
+    [35] = "Tweaking visuals...",
+    [40] = "Almost halfway there...",
+    [45] = "Polishing UI...",
+    [50] = "Halfway done!",
+    [55] = "Loading textures...",
+    [60] = "Adding effects...",
+    [65] = "Tuning sounds...",
+    [70] = "Stabilizing scripts...",
+    [75] = "Final adjustments...",
+    [80] = "Cleaning cache...",
+    [85] = "Wrapping up...",
+    [90] = "Almost finished...",
+    [95] = "Finalizing...",
+    [100] = "Done!"
+}
+
+-- 4 mins
+local progress = 0
+local totalDuration = 20 -- seconds
+local startTime = tick()
+
+while progress < 100 do
+    local elapsed = tick() - startTime
+    local t = math.clamp(elapsed / totalDuration, 0, 1)
+
+    -- Quadratic ease-out for fast start, slow end
+    progress = 100 * (1 - (1 - t)^2)
+
+    LoadingBar.Size = UDim2.new(progress/100,0,1,0)
+    PercentLabel.Text = math.floor(progress).."%"
+
+    if messages[math.floor(progress)] then
+        SubTitle.Text = messages[math.floor(progress)]
+    end
+
+    local targetPos = UDim2.new((progress/100)-0.05,0,0,0)
+    TweenService:Create(GlowBar, TweenInfo.new(0.1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Position = targetPos}):Play()
+
+    local glowR = 50
+    local glowG = 150 + math.sin(tick())*50
+    local glowB = 255
+    GlowBar.BackgroundColor3 = Color3.fromRGB(glowR, math.clamp(glowG,150,200), glowB)
+
+    local rotationTarget = math.sin(tick()*1.5) * 10
+    Title.Rotation = Title.Rotation + (rotationTarget - Title.Rotation) * 0.05 -- smooth lerp
+
+    task.wait(0.03)
+end
+
+-- When loading finishes
+PercentLabel.Text = "Done!"
+SubTitle.Text = "All systems ready!"
+
+-- Fade out music first
+TweenService:Create(Music, TweenInfo.new(1), {Volume = 0}):Play()
+
+-- Fade out the entire screen (smoothly)
+local fadeTween = TweenService:Create(Background, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
+    BackgroundTransparency = 1
+})
+
+-- Fade out text and bar elements
+local elementsToFade = {Title, SubTitle, PercentLabel, BarBackground}
+for _, element in pairs(elementsToFade) do
+    TweenService:Create(element, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
+        TextTransparency = 1,
+        BackgroundTransparency = 1
+    }):Play()
+end
+
+fadeTween:Play()
+task.wait(2.2) -- wait for fade to complete
+
+-- Destroy GUI cleanly
+ScreenGui:Destroy()
+
+-- Load the script AFTER fade-out
+task.wait(0.5)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/chooser"))()
