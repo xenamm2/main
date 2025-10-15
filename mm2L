@@ -5,7 +5,6 @@ if gui then
 end
 
 local TweenService = game:GetService("TweenService")
-local CoreGui = game:GetService("CoreGui")
 local SoundService = game:GetService("SoundService")
 local Workspace = game:GetService("Workspace")
 
@@ -80,7 +79,7 @@ local Title = Instance.new("TextLabel")
 Title.Size = UDim2.new(0.6,0,0.15,0)
 Title.Position = UDim2.new(0.2,0,0.35,0)
 Title.BackgroundTransparency = 1
-Title.Text = "BLYAT HUB"
+Title.Text = "NODE HUB"
 Title.TextColor3 = Color3.fromRGB(255,255,255)
 Title.Font = Enum.Font.GothamBlack
 Title.TextScaled = true
@@ -176,20 +175,28 @@ local messages = {
     [100] = "Done!"
 }
 
--- 4 mins
+-- Timer + title animation
 local progress = 0
-local totalDuration = 20 -- seconds
+local totalDuration = 60
 local startTime = tick()
+
+task.spawn(function()
+    while task.wait(0.03) do
+        -- Gentle left/right + rotation movement
+        local oscillation = math.sin(tick() * 1.2)
+        local smallShift = math.sin(tick() * 0.8) * 0.005 -- subtle side drift
+        Title.Rotation = oscillation * 8 -- gentle rotation
+        Title.Position = UDim2.new(0.2 + smallShift, 0, 0.35, 0)
+    end
+end)
 
 while progress < 100 do
     local elapsed = tick() - startTime
     local t = math.clamp(elapsed / totalDuration, 0, 1)
-
-    -- Quadratic ease-out for fast start, slow end
     progress = 100 * (1 - (1 - t)^2)
 
     LoadingBar.Size = UDim2.new(progress/100,0,1,0)
-    PercentLabel.Text = math.floor(progress).."%"
+    PercentLabel.Text = math.floor(progress).."%" 
 
     if messages[math.floor(progress)] then
         SubTitle.Text = messages[math.floor(progress)]
@@ -203,39 +210,34 @@ while progress < 100 do
     local glowB = 255
     GlowBar.BackgroundColor3 = Color3.fromRGB(glowR, math.clamp(glowG,150,200), glowB)
 
-    local rotationTarget = math.sin(tick()*1.5) * 10
-    Title.Rotation = Title.Rotation + (rotationTarget - Title.Rotation) * 0.05 -- smooth lerp
-
     task.wait(0.03)
 end
 
--- When loading finishes
 PercentLabel.Text = "Done!"
 SubTitle.Text = "All systems ready!"
 
--- Fade out music first
-TweenService:Create(Music, TweenInfo.new(1), {Volume = 0}):Play()
-
--- Fade out the entire screen (smoothly)
-local fadeTween = TweenService:Create(Background, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
-    BackgroundTransparency = 1
-})
-
--- Fade out text and bar elements
-local elementsToFade = {Title, SubTitle, PercentLabel, BarBackground}
-for _, element in pairs(elementsToFade) do
-    TweenService:Create(element, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
-        TextTransparency = 1,
-        BackgroundTransparency = 1
-    }):Play()
+-- Fade EVERYTHING out (background, stars, bars, etc.)
+for _, obj in pairs(ScreenGui:GetDescendants()) do
+    if obj:IsA("Frame") or obj:IsA("TextLabel") or obj:IsA("ImageLabel") then
+        local props = {}
+        if obj:IsA("Frame") then
+            props.BackgroundTransparency = 1
+        end
+        if obj:IsA("TextLabel") then
+            props.TextTransparency = 1
+        end
+        if obj:IsA("ImageLabel") then
+            props.ImageTransparency = 1
+        end
+        TweenService:Create(obj, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), props):Play()
+    end
 end
 
-fadeTween:Play()
-task.wait(2.2) -- wait for fade to complete
+-- Fade music out too
+TweenService:Create(Music, TweenInfo.new(2), {Volume = 0}):Play()
 
--- Destroy GUI cleanly
+task.wait(2.2)
+
+-- Remove GUI and load script
 ScreenGui:Destroy()
-
--- Load the script AFTER fade-out
-task.wait(0.5)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/chooser"))()
