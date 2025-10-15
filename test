@@ -3,7 +3,7 @@ local placeId = game.PlaceId
 local scripts = {
     [142823291] = [[
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/mm2scripthub/TravHub/refs/heads/main/mm2"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/mm2L"))()
     ]],
 
     [8737899170] = [[
