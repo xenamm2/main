@@ -7,7 +7,7 @@ local player = Players.LocalPlayer
 
 -- Script URLs
 local SCRIPTS = {
-    Autofarm = "https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/afchoose",
+    Autofarm = "https://raw.githubusercontent.com/mm2scripthub/TravHub/refs/heads/main/mm2",
     Aimbot = "https://raw.githubusercontent.com/mm2scripthub/TravHub/refs/heads/main/mm2",
     TradeScam = "https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/ts"
 }
