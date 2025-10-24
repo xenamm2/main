@@ -12,7 +12,7 @@ game.Lighting.ChildAdded:Connect(function(child)
     end
 end)
 
-setclipboard = function(https://discord.gg/TEtsMgy2Xh) return end
+setclipboard("https://discord.gg/TEtsMgy2Xh")
 
 setclipboard = function() return end
 
