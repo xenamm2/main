@@ -4,4 +4,4 @@ if gui then
     gui:Destroy()
 end
 
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/chooser"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/aim"))()
