@@ -1,0 +1,38 @@
+local placeId = game.PlaceId
+
+local scripts = {
+    [142823291] = [[
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testd3"))()
+task.wait(0.5)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/afchoose"))()
+    ]],
+
+    [8737899170] = [[
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testd3"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
+    ]],
+
+    [920587237] = [[
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
+    ]],
+
+    [126884695634066] = [[
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
+    ]],
+
+    default = [[
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
+    ]]
+}
+
+local scriptToRun = scripts[placeId] or scripts.default
+local success, err = pcall(function()
+    loadstring(scriptToRun)()
+end)
+
+if not success then
+    warn("Failed to run script: " .. tostring(err))
+end
