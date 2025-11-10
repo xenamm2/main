@@ -4,7 +4,7 @@ local scripts = {
     [142823291] = [[
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testd3"))()
 task.wait(0.5)
-loadstring(game:HttpGet(""))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/capybara-script"))()
     ]],
 
     [8737899170] = [[
