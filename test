@@ -23,7 +23,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/hea
     ]],
 
 [127742093697776] = [[
-loadstring(game:HttpGet("https://pastebin.com/raw/mC0Df2Nh"))()
+loadstring(game:HttpGet("https://pastebin.com/raw/tJPBaW40"))()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
     ]],
 
