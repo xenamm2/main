@@ -4,7 +4,7 @@ local scripts = {
     [142823291] = [[
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
 task.wait(0.5)
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/yarhm"))()
+loadstring(game:HttpGet("https://api.overdrivehub.xyz/v1/auth"))()
     ]],
 
     [8737899170] = [[
