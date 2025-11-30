@@ -13,8 +13,8 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/hea
     ]],
 
     [920587237] = [[
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Sporty333/SpawnerX-Hub/main/Loader.lua"))()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
+loadstring(game:HttpGet("https://pastefy.app/DEQ6FGR0/raw"))()
     ]],
 
     [126884695634066] = [[
