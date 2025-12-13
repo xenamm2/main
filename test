@@ -3,8 +3,6 @@ local placeId = game.PlaceId
 local scripts = {
     [142823291] = [[
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testmchoose"))()
-task.wait(0.5)
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/mm2L"))()
     ]],
 
     [8737899170] = [[
