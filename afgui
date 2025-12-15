@@ -1,0 +1,1172 @@
+if game.PlaceId == 142823291 or game.GameId == 142823291 then
+	warn("Correct Game Loading...")
+else
+	game:GetService("Players").LocalPlayer:Kick("This script is designed to Run On MM2")
+end
+
+local TpScript = "https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/afgui"
+local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+local Players = game:GetService("Players")
+local Plr = Players.LocalPlayer
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Notify = false
+
+local TweenService = game:GetService("TweenService")
+local VirtualUser = game:GetService("VirtualUser")
+
+local Character = Plr.Character or Plr.CharacterAdded:Wait()
+local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+
+local CoinCollected = ReplicatedStorage.Remotes.Gameplay:WaitForChild("CoinCollected")
+local RoundStart = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Gameplay"):WaitForChild("RoundStart")
+local RoundEndFade = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Gameplay"):WaitForChild("RoundEndFade")
+
+local ToFarm = "Egg"
+local start_position = HumanoidRootPart.CFrame
+local farming = false
+local bag_full = false
+local total_collected = 0
+local auto_farm_speed = 15
+local autofarm_enabled = false
+
+-- Chat function
+local TextChatService = cloneref(game:GetService("TextChatService"))
+local function chat(message)
+	TextChatService.TextChannels.RBXGeneral:SendAsync(message)
+end
+
+-- Anti-AFK
+Plr.Idled:Connect(function()
+	VirtualUser:CaptureController()
+	VirtualUser:ClickButton2(Vector2.new())
+end)
+
+task.spawn(function()
+	while true do
+		VirtualUser:CaptureController()
+		VirtualUser:ClickButton2(Vector2.new())
+		task.wait(60)
+	end
+end)
+
+-- Functions
+local function get_nearest_coin()
+	local closest_coin, min_distance = nil, math.huge
+	for _, model in pairs(workspace:GetChildren()) do
+		if model:FindFirstChild("CoinContainer") then
+			for _, coin in pairs(model.CoinContainer:GetChildren()) do
+				if coin:GetAttribute("CoinID") == ToFarm and coin:FindFirstChild("TouchInterest") then
+					local distance = (HumanoidRootPart.Position - coin.Position).Magnitude
+					if distance < min_distance then
+						closest_coin = coin
+						min_distance = distance
+					end
+				end
+			end
+		end
+	end
+	return closest_coin, min_distance
+end
+
+local function tween_to(position, duration)
+	local tween =
+		TweenService:Create(HumanoidRootPart, TweenInfo.new(duration, Enum.EasingStyle.Linear), { CFrame = position })
+	tween:Play()
+	return tween
+end
+
+local function start_farming_loop()
+	spawn(function()
+		while true do
+			if farming and not bag_full and Character and HumanoidRootPart then
+				local coin, distance = get_nearest_coin()
+				if coin then
+					if distance > 150 then
+						HumanoidRootPart.CFrame = coin.CFrame
+					else
+						local tween = tween_to(coin.CFrame, distance / auto_farm_speed)
+						repeat
+							task.wait()
+						until not coin:FindFirstChild("TouchInterest") or not farming
+						tween:Cancel()
+					end
+				end
+			end
+			task.wait(0.1)
+		end
+	end)
+end
+
+-- Start the farming loop once
+start_farming_loop()
+
+-- Update character on respawn
+Plr.CharacterAdded:Connect(function(newChar)
+	Character = newChar
+	HumanoidRootPart = newChar:WaitForChild("HumanoidRootPart")
+	start_position = HumanoidRootPart.CFrame
+end)
+
+-- Coin collection handler
+CoinCollected.OnClientEvent:Connect(function(coin_type, current, max)
+	if coin_type == ToFarm then
+		total_collected += 1
+		if current == max then
+			bag_full = true
+			tween_to(start_position, 2).Completed:Wait()
+			if Character:FindFirstChild("Humanoid") then
+				Character.Humanoid.Health = 0
+			end
+			task.wait(5)
+			bag_full = false
+		end
+	end
+end)
+
+-- Round events
+RoundStart.OnClientEvent:Connect(function()
+	if autofarm_enabled then
+		farming = true
+	end
+end)
+
+RoundEndFade.OnClientEvent:Connect(function()
+	farming = false
+end)
+
+WindUI:AddTheme({
+	Name = "Christmas",
+
+	Accent = Color3.fromHex("#99cfff"),
+	Dialog = Color3.fromHex("#002848"),
+	Outline = Color3.fromHex("#ffffff"),
+	Text = Color3.fromHex("#ffffff"),
+	Placeholder = Color3.fromHex("#7a7a7a"),
+	Background = Color3.fromHex("#0076de"),
+	Button = Color3.fromHex("#52525b"),
+	Icon = Color3.fromHex("#ffffff"),
+})
+
+
+WindUI:AddTheme({
+	Name = "Halloween", -- theme name
+
+	Accent = Color3.fromHex("#271700"),
+	Dialog = Color3.fromHex("#3f2400"),
+	Outline = Color3.fromHex("#FFFFFF"),
+	Text = Color3.fromHex("#FFFFFF"),
+	Placeholder = Color3.fromHex("#7a7a7a"),
+	Background = Color3.fromHex("#3f2400"),
+	Button = Color3.fromHex("#52525b"),
+	Icon = Color3.fromHex("#ff9100"),
+})
+
+WindUI:AddTheme({
+	Name = "Crimson", -- theme name
+
+	Accent = Color3.fromHex("#271700"),
+	Dialog = Color3.fromHex("#2b0000"),
+	Outline = Color3.fromHex("#FFFFFF"),
+	Text = Color3.fromHex("#FFFFFF"),
+	Placeholder = Color3.fromHex("#7a7a7a"),
+	Background = Color3.fromHex("#2b0000"),
+	Button = Color3.fromHex("#52525b"),
+	Icon = Color3.fromHex("#b82500"),
+})
+
+WindUI:AddTheme({
+	Name = "Ocean", -- theme name
+
+	Accent = Color3.fromHex("#271700"),
+	Dialog = Color3.fromHex("#002c41"),
+	Outline = Color3.fromHex("#FFFFFF"),
+	Text = Color3.fromHex("#FFFFFF"),
+	Placeholder = Color3.fromHex("#7a7a7a"),
+	Background = Color3.fromHex("#002c41"),
+	Button = Color3.fromHex("#52525b"),
+	Icon = Color3.fromHex("#0077ff"),
+})
+
+WindUI:AddTheme({
+	Name = "Dark", -- theme name
+
+	Accent = Color3.fromHex("#18181b"),
+	Dialog = Color3.fromHex("#161616"),
+	Outline = Color3.fromHex("#FFFFFF"),
+	Text = Color3.fromHex("#FFFFFF"),
+	Placeholder = Color3.fromHex("#7a7a7a"),
+	Background = Color3.fromHex("#101010"),
+	Button = Color3.fromHex("#52525b"),
+	Icon = Color3.fromHex("#a1a1aa"),
+})
+
+local Window = WindUI:CreateWindow({
+	Title = "Blyat Scripts Hub",
+	Icon = "crown",
+	Author = "by Blyat Scripts On Youtube",
+	Folder = "BlyatScriptsHub",
+	Size = UDim2.fromOffset(580, 460),
+	MinSize = Vector2.new(560, 350),
+	MaxSize = Vector2.new(850, 560),
+	Transparent = true,
+	Theme = "Dark",
+	Resizable = true,
+	SideBarWidth = 200,
+	BackgroundImageTransparency = 0.42,
+	HideSearchBar = false,
+	ScrollBarEnabled = true,
+
+	User = {
+		Enabled = true,
+		Anonymous = false,
+		Callback = function() end,
+	},
+})
+
+Window:EditOpenButton({
+	Title = "Open Button",
+	Icon = "monitor",
+	CornerRadius = UDim.new(0, 16),
+	StrokeThickness = 2,
+	Color = ColorSequence.new( -- gradient
+		Color3.fromHex("#00d0ff"),
+		Color3.fromHex("#b5ffff")
+	),
+	OnlyMobile = false,
+	Enabled = true,
+	Draggable = false,
+})
+
+Window:Tag({
+	Title = "Xmas updated🎄",
+	Color = Color3.fromHex("#00aaff"),
+	Radius = 8,
+})
+
+WindUI:SetTheme("Christmas")
+
+Window:CreateTopbarButton("DarkMode", "moon", function()
+	WindUI:SetTheme("Dark")
+end, 990)
+Window:CreateTopbarButton("Event", "candy-cane", function()
+	WindUI:SetTheme("Christmas")
+end, 990)
+
+local Section = Window:Section({
+	Title = "Main",
+	Icon = "monitor",
+	Opened = false,
+})
+
+local Tab = Section:Tab({
+	Title = "Stats",
+	Icon = "chart-no-axes-column",
+	Locked = false,
+})
+
+local Paragraph = Tab:Paragraph({
+	Title = "Player: " .. Players.LocalPlayer.Name,
+	Desc = "",
+	Color = "Blue",
+	Image = "",
+	ImageSize = 30,
+	Thumbnail = "",
+	ThumbnailSize = 80,
+	Locked = false,
+	Buttons = {},
+})
+
+local Paragraph = Tab:Paragraph({
+	Title = "Player Display Name: " .. Players.LocalPlayer.DisplayName,
+	Desc = "",
+	Color = "Blue",
+	Image = "",
+	ImageSize = 30,
+	Thumbnail = "",
+	ThumbnailSize = 80,
+	Locked = false,
+	Buttons = {},
+})
+
+local Paragraph = Tab:Paragraph({
+	Title = "Account Age: " .. Players.LocalPlayer.AccountAge,
+	Desc = "",
+	Color = "Blue",
+	Image = "",
+	ImageSize = 30,
+	Thumbnail = "",
+	ThumbnailSize = 80,
+	Locked = false,
+	Buttons = {},
+})
+
+Tab:Divider()
+
+local Paragraph = Tab:Paragraph({
+	Title = "Player Level: " .. Players.LocalPlayer:GetAttribute("Level"),
+	Desc = "",
+	Color = "Blue",
+	Image = "",
+	ImageSize = 30,
+	Thumbnail = "",
+	ThumbnailSize = 80,
+	Locked = false,
+	Buttons = {},
+})
+
+local Paragraph = Tab:Paragraph({
+	Title = "Player Prestige: " .. Players.LocalPlayer:GetAttribute("Prestige"),
+	Desc = "",
+	Color = "Blue",
+	Image = "",
+	ImageSize = 30,
+	Thumbnail = "",
+	ThumbnailSize = 80,
+	Locked = false,
+	Buttons = {},
+})
+
+local Paragraph = Tab:Paragraph({
+	Title = "Player Total XP: " .. Players.LocalPlayer:GetAttribute("XP"),
+	Desc = "",
+	Color = "Blue",
+	Image = "",
+	ImageSize = 30,
+	Thumbnail = "",
+	ThumbnailSize = 80,
+	Locked = false,
+	Buttons = {},
+})
+
+Tab:Divider()
+
+local Paragraph = Tab:Paragraph({
+	Title = "Equipped Gun: " .. Players.LocalPlayer:GetAttribute("EquippedGun"),
+	Desc = "",
+	Color = "Blue",
+	Image = "",
+	ImageSize = 30,
+	Thumbnail = "",
+	ThumbnailSize = 80,
+	Locked = false,
+	Buttons = {},
+})
+
+local Paragraph = Tab:Paragraph({
+	Title = "Equipped Perk: " .. Players.LocalPlayer:GetAttribute("EquippedPerk"),
+	Desc = "",
+	Color = "Blue",
+	Image = "",
+	ImageSize = 30,
+	Thumbnail = "",
+	ThumbnailSize = 80,
+	Locked = false,
+	Buttons = {},
+})
+
+local Paragraph = Tab:Paragraph({
+	Title = "Equipped Knife: " .. Players.LocalPlayer:GetAttribute("EquippedKnife"),
+	Desc = "",
+	Color = "Blue",
+	Image = "",
+	ImageSize = 30,
+	Thumbnail = "",
+	ThumbnailSize = 80,
+	Locked = false,
+	Buttons = {},
+})
+
+local Tab = Section:Tab({
+	Title = "Player",
+	Icon = "gamepad-2",
+	Locked = false,
+})
+
+local Paragraph = Tab:Paragraph({
+	Title = "Thank you for using Us 📚",
+	Desc = "We are the only hub that have been active for 1 year without any bugs and updating in exact update time!",
+	Color = "Blue",
+	Image = "",
+	ImageSize = 30,
+	Thumbnail = "",
+	ThumbnailSize = 80,
+	Locked = false,
+	Buttons = {},
+})
+
+Tab:Divider()
+
+local Slider = Tab:Slider({
+	Title = "Player Speed!",
+
+	Step = 1,
+
+	Value = {
+		Min = 20,
+		Max = 500,
+		Default = 20,
+	},
+	Callback = function(value)
+		Plr.Character.Humanoid.WalkSpeed = value
+	end,
+})
+
+local Slider = Tab:Slider({
+	Title = "Player Jump Power!",
+
+	Step = 1,
+
+	Value = {
+		Min = 50,
+		Max = 1000,
+		Default = 70,
+	},
+	Callback = function(value)
+		Plr.Character.Humanoid.JumpPower = value 
+	end,
+})
+
+local Toggle = Tab:Toggle({
+	Title = "Enable Shot Murderer Button",
+	Desc = "Spawns a button to shot murderer.",
+	Icon = "check",
+	Type = "Checkbox",
+	Default = false,
+	Callback = function(state)
+		button = state
+		local TargetPos = Players.BuilderGirls00.Character:FindFirstChild("HumanoidRootPart").position
+		local RemoteFunction = Players.LocalPlayer.Character.Gun.KnifeLocal.CreateBeam.RemoteFunction
+		if state then
+			RemoteFunction:InvokeServer(1, TargetPos, "AH2")
+		else
+			button = false
+		end
+	end,
+})
+
+local Section = Window:Section({
+	Title = "Farms",
+	Icon = "bitcoin",
+	Opened = false,
+})
+
+local Tab = Section:Tab({
+	Title = "Autofarm Settings",
+	Icon = "settings",
+	Locked = false,
+})
+
+local Paragraph = Tab:Paragraph({
+	Title = "Instructions!",
+	Desc = "We limited speed to 22, because of recent reviews saying that anticheat kicks them if above, so please understand us.",
+	Color = "Blue",
+	Locked = false,
+})
+
+Tab:Divider()
+
+local Dropdown = Tab:Dropdown({
+	Title = "Farm Type",
+	Values = { "SnowToken", "Egg", "Coin", "Candy" },
+	Value = "SnowToken",
+	Callback = function(option)
+		ToFarm = option
+	end,
+})
+
+local Slider = Tab:Slider({
+	Title = "Auto Farm Speed",
+	Step = 1,
+
+	Value = {
+		Min = 5,
+		Max = 22,
+		Default = 20,
+	},
+	Callback = function(value)
+		auto_farm_speed = value
+	end,
+})
+
+local Tab = Section:Tab({
+	Title = "Autofarm",
+	Icon = "book",
+	Locked = false,
+})
+
+local Toggle = Tab:Toggle({
+	Title = "Enable Autofarm",
+	Desc = "Automatically farms the selected type.",
+	Icon = "check",
+	Type = "Checkbox",
+	Default = false,
+	Callback = function(state)
+		autofarm_enabled = state
+		if state then
+			WindUI:Notify({
+				Title = "Autofarm Enabled",
+				Content = "Autofarm will start on round begin.",
+				Duration = 3,
+				Icon = "check",
+			})
+		else
+			farming = false
+			WindUI:Notify({
+				Title = "Autofarm Disabled",
+				Content = "Autofarm stopped.",
+				Duration = 3,
+				Icon = "x",
+			})
+		end
+	end,
+})
+
+local Section = Window:Section({
+	Title = "Optimization",
+	Icon = "hard-drive",
+	Opened = false,
+})
+
+local Tab = Section:Tab({
+	Title = "Low Optimization Mode",
+	Icon = "turtle",
+	Locked = false,
+})
+
+local Paragraph = Tab:Paragraph({
+	Title = "Information!",
+	Desc = "This mode disable shadows and lows roblox graphics.",
+	Color = "Blue",
+	Locked = false,
+})
+
+Tab:Divider()
+
+local Button = Tab:Button({
+	Title = "Enable Low Optimization Mode",
+	Desc = "Enables Low Optimization Mode (For High-End Devices)",
+	Locked = false,
+	Callback = function()
+		local Target = game.Workspace:GetDescendants()
+
+		local function DisableShadows()
+			for _, niga in ipairs(Target) do
+				if niga:IsA("BasePart") then
+					niga.CastShadow = false
+				end
+			end
+		end
+		DisableShadows()
+		RoundStart.OnClientEvent:Connect(DisableShadows)
+	end,
+})
+
+local Tab = Section:Tab({
+	Title = "Mid Optimization Mode",
+	Icon = "cat",
+	Locked = false,
+})
+
+local Paragraph = Tab:Paragraph({
+	Title = "Information!",
+	Desc = "This mode disable shadows, removes some textures and removes VFX.",
+	Color = "Orange",
+	Locked = false,
+})
+
+Tab:Divider()
+
+local Button = Tab:Button({
+	Title = "Enable Mid Optimization Mode",
+	Desc = "Enables Mid Optimization Mode (For low-Mid Devices)",
+	Locked = false,
+	Callback = function()
+		local Target = game.Workspace:GetDescendants()
+
+		local function DisableShadowsAndVFX()
+			for _, niga in ipairs(Target) do
+				if niga:IsA("BasePart") then
+					niga.CastShadow = false
+				elseif niga:IsA("ParticleEmitter") then
+					niga:Remove()
+				end
+			end
+		end
+		DisableShadowsAndVFX()
+		RoundStart.OnClientEvent:Connect(DisableShadowsAndVFX)
+	end,
+})
+
+local Tab = Section:Tab({
+	Title = "Ultra Optimization Mode",
+	Icon = "fish",
+	Locked = false,
+})
+
+local Paragraph = Tab:Paragraph({
+	Title = "Information!",
+	Desc = "This mode disable shadows and removes all textures and set graphic mode to 1.",
+	Color = "Blue",
+	Locked = false,
+})
+
+Tab:Divider()
+
+local Button = Tab:Button({
+	Title = "Enable Ultra Optimization Mode",
+	Desc = "Enables Ultra Optimization Mode (For potato Devices)",
+	Locked = false,
+	Callback = function()
+		local Target = game.Workspace:GetDescendants()
+
+		local function DisableShadowsAndVFX()
+			for _, niga in ipairs(Target) do
+				if niga:IsA("BasePart") then
+					niga.CastShadow = false
+				elseif niga:IsA("ParticleEmitter") then
+					niga:Remove()
+				end
+			end
+		end
+		DisableShadowsAndVFX()
+		RoundStart.OnClientEvent:Connect(DisableShadowsAndVFX)
+	end,
+})
+
+local Section = Window:Section({
+	Title = "Teleports",
+	Icon = "navigation",
+	Opened = false,
+})
+
+local Tab = Section:Tab({
+	Title = "Players",
+	Icon = "navigation",
+	Locked = false,
+})
+
+local Paragraph = Tab:Paragraph({
+	Title = "Caution!",
+	Desc = "When using teleport make sure not to change positions fast or you could get kicked!",
+	Color = "Blue",
+	Image = "",
+	ImageSize = 30,
+	Thumbnail = "",
+	ThumbnailSize = 80,
+	Locked = false,
+	Buttons = {},
+})
+
+local Dropdown = Tab:Dropdown({
+	Title = "Select Player",
+	Values = {},
+	Value = "",
+	Callback = function(option) end,
+})
+
+local function UpdateDropwdown()
+	local PlayerNames = {}
+	for _, player in ipairs(Players:GetPlayers()) do
+		if player.Character then
+			if player == Players.LocalPlayer then
+				warn("Skipped Local Player")
+			else
+				table.insert(PlayerNames, player.Name)
+			end
+		end
+	end
+	Dropdown:Refresh(PlayerNames)
+end
+
+UpdateDropwdown()
+Players.PlayerAdded:Connect(UpdateDropwdown)
+Players.PlayerRemoving:Connect(UpdateDropwdown)
+
+local Button = Tab:Button({
+	Title = "Teleport To Selected",
+	Desc = "Teleport to player selected above.",
+	Locked = false,
+	Callback = function()
+		local SelectedPlayerName = Dropdown.Value
+		if SelectedPlayerName then
+			local TargetPlayer = Players:FindFirstChild(SelectedPlayerName)
+			if
+				TargetPlayer
+				and TargetPlayer.Character
+				and TargetPlayer.Character:FindFirstChild("HumanoidRootPart")
+			then
+				local TargetPosition = TargetPlayer.Character.HumanoidRootPart.Position
+				if Players.LocalPlayer and Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+					Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(TargetPosition)
+					WindUI:Notify({
+						Title = "Teleported Succesful!",
+						Content = "Teleported to: " .. TargetPlayer.Name,
+						Duration = 3,
+						Icon = "navigation",
+					})
+				else
+					WindUI:Notify({
+						Title = "An Error Ocurred!",
+						Content = "Local player's character or HumanoidRootPart not found",
+						Duration = 3,
+						Icon = "navigation",
+					})
+				end
+			else
+				warn("Selected player or their character not found.")
+			end
+		else
+			warn("No player selected.")
+		end
+	end,
+})
+
+local Tab = Section:Tab({
+	Title = "Teleport Roles",
+	Icon = "zap",
+	Locked = false,
+})
+
+local Button = Tab:Button({
+	Title = "Teleport To Sherrif",
+	Desc = "Teleport to sherrif.",
+	Locked = false,
+	Callback = function()
+		for _, Player in ipairs(Players:GetPlayers()) do
+			if Player == Players.LocalPlayer then
+				warn("Skipped Local Player on teleport")
+			elseif Player.Backpack:FindFirstChild("Gun") then
+				Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame =
+					Player.Character:FindFirstChild("HumanoidRootPart").CFrame
+				WindUI:Notify({
+					Title = "Teleported to sherrif!",
+					Content = "The sherrif is: " .. Player.Name,
+					Duration = 5,
+					Icon = "axe",
+				})
+			elseif Player.Character:FindFirstChild("Gun") then
+				Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame =
+					Player.Character:FindFirstChild("HumanoidRootPart").CFrame
+				WindUI:Notify({
+					Title = "Teleported to sherrif!",
+					Content = "The sherrif is: " .. Player.Name,
+					Duration = 5,
+					Icon = "axe",
+				})
+			end
+		end
+	end,
+})
+
+local Button = Tab:Button({
+	Title = "Teleport To murderer",
+	Desc = "Teleport to murderer.",
+	Locked = false,
+	Callback = function()
+		for _, Player in ipairs(Players:GetPlayers()) do
+			if Player == Players.LocalPlayer then
+				warn("Skipped Local Player on teleport")
+			elseif Player.Backpack:FindFirstChild("Knife") then
+				Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame =
+					Player.Character:FindFirstChild("HumanoidRootPart").CFrame
+				WindUI:Notify({
+					Title = "Teleported to murderer!",
+					Content = "The murderer is: " .. Player.Name,
+					Duration = 5,
+					Icon = "axe",
+				})
+			elseif Player.Character:FindFirstChild("Knife") then
+				Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame =
+					Player.Character:FindFirstChild("HumanoidRootPart").CFrame
+				WindUI:Notify({
+					Title = "Teleported to murderer!",
+					Content = "The murderer is: " .. Player.Name,
+					Duration = 5,
+					Icon = "axe",
+				})
+			end
+		end
+	end,
+})
+
+local Tab = Section:Tab({
+	Title = "Teleport Map Locations",
+	Icon = "map-pin",
+	Locked = false,
+})
+
+local Button = Tab:Button({
+	Title = "Teleport To Halloween Map Secret Zone!",
+	Desc = "Teleport to Halloween Map Secret Zone!.",
+	Locked = false,
+	Callback = function()
+		local Lobby = game.Workspace.Lobby.Map:GetChildren()[31].Num_2
+
+		Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = Lobby.CFrame
+	end,
+})
+
+local Button = Tab:Button({
+	Title = "Teleport To lobby",
+	Desc = "Teleport to lobby.",
+	Locked = false,
+	Callback = function()
+		local Lobby = game.Workspace.Lobby.Spawns:GetChildren()[11]
+
+		Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = Lobby.CFrame
+	end,
+})
+
+local Section = Window:Section({
+	Title = "ESP",
+	Icon = "eye",
+	Opened = false,
+})
+
+local Tab = Section:Tab({
+	Title = "Main",
+	Icon = "pin",
+	Locked = false,
+})
+
+local Button = Tab:Button({
+	Title = "Add ESP!",
+	Desc = "Is still on dev but works great!",
+	Locked = false,
+	Callback = function()
+		local Player = game:GetService("Players").LocalPlayer
+		local Players = game:GetService("Players")
+		local InnocentColor = Color3.new(0, 170, 0)
+		local SheriffColor = Color3.new(0, 0.682353, 1)
+		local MurdererColor = Color3.new(1, 0, 0)
+		local NeutralColor = Color3.new(1, 1, 1)
+
+		local function RefreshEsp()
+			for i, player in pairs(Players:GetPlayers()) do
+				local character = player.Character
+				if
+					character
+					and not player.character:FindFirstChild("EspHighlight")
+					and not character:WaitForChild("HumanoidRootPart"):FindFirstChild("EspBill")
+				then
+					if player ~= Players.LocalPlayer then
+						local character = player.Character
+						local high = Instance.new("Highlight")
+						high.Name = "EspHighlight"
+						high.Parent = character
+						high.FillColor = NeutralColor
+						high.FillTransparency = 0.5
+						local Bill = Instance.new("BillboardGui")
+						Bill.Parent = character:WaitForChild("HumanoidRootPart")
+						Bill.Name = "EspBill"
+						Bill.AlwaysOnTop = true
+						Bill.Size = UDim2.new(0, 77, 0, 17)
+						Bill.MaxDistance = 600
+						local Text = Instance.new("TextLabel")
+						Text.Name = "EspText"
+						Text.Parent = Bill
+						Text.Text = player.Name
+						Text.Size = UDim2.new(1, 0, 1, 0)
+						Text.TextScaled = true
+						Text.TextColor3 = Color3.new(0, 0, 0)
+						Text.BackgroundTransparency = 0.5
+						Text.BackgroundColor3 = NeutralColor
+						local Stroke = Instance.new("UIStroke")
+						Stroke.Parent = Text
+						Stroke.ApplyStrokeMode = "Border"
+						Stroke.Thickness = 2
+						local Corner = Instance.new("UICorner")
+						Corner.Parent = Text
+						Corner.CornerRadius = UDim.new(0, 9)
+					end
+				end
+			end
+		end
+
+		RefreshEsp()
+		Players.PlayerAdded:Connect(RefreshEsp)
+		Players.PlayerRemoving:Connect(RefreshEsp)
+		RoundEndFade.OnClientEvent:Connect(function()
+			task.wait(10)
+			RefreshEsp()
+		end)
+		RoundStart.OnClientEvent:Connect(RefreshEsp)
+	end,
+})
+
+local function UpdateRoles()
+	for _, Player in ipairs(Players:GetPlayers()) do
+		if Player.Backpack:FindFirstChild("Knife") then
+			WindUI:Notify({
+				Title = "Murderer Located",
+				Content = "The Murderer is: " .. Player.Name,
+				Duration = 5,
+				Icon = "axe",
+			})
+		elseif Player.Character:FindFirstChild("Knife") then
+			WindUI:Notify({
+				Title = "Murderer Located",
+				Content = "The Murderer is: " .. Player.Name,
+				Duration = 5,
+				Icon = "axe",
+			})
+		elseif Player.Backpack:FindFirstChild("Gun") then
+			WindUI:Notify({
+				Title = "Sherrif Located",
+				Content = "The Sherrif is: " .. Player.Name,
+				Duration = 5,
+				Icon = "siren",
+			})
+		elseif Player.Character:FindFirstChild("Gun") then
+			WindUI:Notify({
+				Title = "Sherrif Located",
+				Content = "The Sherrif is: " .. Player.Name,
+				Duration = 5,
+				Icon = "siren",
+			})
+		end
+	end
+end
+
+local Tab = Section:Tab({
+	Title = "Roles",
+	Icon = "map-pinned",
+	Locked = false,
+})
+
+local Button = Tab:Button({
+	Title = "Notify Roles!",
+	Desc = "Only works when a round is going on!",
+	Locked = false,
+	Callback = function()
+		UpdateRoles()
+	end,
+})
+
+local Button = Tab:Button({
+	Title = "Expose Roles!",
+	Desc = "Says who is each role in chat so everyone knows!",
+	Locked = false,
+	Callback = function()
+		for _, Player in ipairs(Players:GetPlayers()) do
+			if Player.Backpack:FindFirstChild("Knife") then
+				chat("The murderer is: " .. Player.Name)
+			elseif Player.Character:FindFirstChild("Knife") then
+				chat("The murderer is: " .. Player.Name)
+			elseif Player.Backpack:FindFirstChild("Gun") then
+				chat("The sherrif is: " .. Player.Name)
+			elseif Player.Character:FindFirstChild("Gun") then
+				chat("The sherrif is: " .. Player.Name)
+			end
+		end
+	end,
+})
+
+local Section = Window:Section({
+	Title = "Item Spawner",
+	Icon = "gem",
+	Opened = false,
+})
+
+local Tab = Section:Tab({
+	Title = "Main Spawner",
+	Icon = "terminal",
+	Locked = false,
+})
+
+local Paragraph = Tab:Paragraph({
+	Title = "Example Of Popular Items Correct Names!",
+	Desc = "XenoGun, XenoKnife, Gingerscope, Harvester, Icepiercer, SunsetKnife, SunsetGun...",
+	Color = "Blue",
+	Locked = false,
+})
+
+Tab:Divider()
+
+local Input = Tab:Input({
+	Title = "Item Name",
+	Desc = "Example: XenoKnife",
+	Value = "",
+	InputIcon = "sword",
+	Type = "Input",
+	Placeholder = "Enter text...",
+	Callback = function(input) end,
+})
+
+Tab:Divider()
+
+local Button = Tab:Button({
+	Title = "Spawn Item",
+	Desc = "Need to be typed above first!",
+	Locked = false,
+	Callback = function()
+		local itemName = Input.Value
+		if itemName and itemName ~= "" then
+			local replicatedStorage = game:GetService("ReplicatedStorage")
+			local boxController =
+				replicatedStorage:WaitForChild("Remotes"):WaitForChild("Shop"):WaitForChild("BoxController")
+			boxController:Fire("KnifeBox4", itemName)
+			local DataBase, PlayerData =
+				require(game:GetService("ReplicatedStorage").Database.Sync.Item),
+				require(game:GetService("ReplicatedStorage").Modules.ProfileData)
+			local PlayerWeapons = PlayerData.Weapons
+			local quantityToAdd = 1
+			local inventory = {}
+
+			local itemId = itemName
+			if not inventory[itemId] then
+				inventory[itemId] = 0
+			end
+			inventory[itemId] = inventory[itemId] + quantityToAdd
+			print("Added " .. quantityToAdd .. " to " .. itemId .. ". New total: " .. inventory[itemId])
+
+			game:GetService("RunService"):BindToRenderStep("InventoryUpdate_" .. itemId, 0, function()
+				PlayerWeapons.Owned[itemId] = inventory[itemId]
+			end)
+
+			game.Players.LocalPlayer.Character:BreakJoints()
+			Input:Clear()
+			WindUI:Notify({
+				Title = "Success",
+				Content = "Weapon Spawned!",
+				Duration = 3,
+				Icon = "check",
+			})
+		else
+			WindUI:Notify({
+				Title = "Error",
+				Content = "Please enter an item name.",
+				Duration = 3,
+				Icon = "x",
+			})
+		end
+	end,
+})
+Window:Divider()
+
+local Tab = Window:Tab({
+	Title = "Anti Steal",
+	Icon = "shield",
+	Locked = false,
+})
+
+local Toggle = Tab:Toggle({
+	Title = "Anti Steal",
+	Desc = "Blocks Any Background Trade Functions, and tell you to manually allow them to work!",
+	Icon = "check",
+	Type = "Checkbox",
+	Default = false,
+	Callback = function(state)
+		if state then
+			WindUI:Notify({
+				Title = "Scaning Functions...",
+				Content = "Scaning Functions to prevent Stealing!",
+				Duration = 3, -- 3 seconds
+				Icon = "shield-ellipsis",
+			})
+			task.wait(3)
+			WindUI:Notify({
+				Title = "Anti Steal Enabled!",
+				Content = "You are safe now, enjoy!",
+				Duration = 3, -- 3 seconds
+				Icon = "shield",
+			})
+		else
+			WindUI:Notify({
+				Title = "Anti Steal Disabled!",
+				Content = "You are out of our control now!",
+				Duration = 3, -- 3 seconds
+				Icon = "shield-off",
+			})
+		end
+	end,
+})
+
+local Tab = Window:Tab({
+	Title = "Settings",
+	Icon = "settings",
+	Locked = false,
+})
+
+local Keybind = Tab:Keybind({
+	Title = "Keybind",
+	Desc = "Keybind to open ui",
+	Value = "G",
+	Callback = function(v)
+		Window:SetToggleKey(Enum.KeyCode[v])
+	end,
+})
+
+Tab:Divider()
+
+local Button = Tab:Button({
+	Title = "Copy Job Id!",
+	Desc = "Copy Your Job Id so someone can join you!",
+	Locked = false,
+	Callback = function()
+		local Job = game.JobId
+		setclipboard(Job)
+	end,
+})
+
+local Input = Tab:Input({
+	Title = "Join With Job Id!",
+	Desc = "Joins with someone else jobid!",
+	Value = nil,
+	InputIcon = "bird",
+	Type = "Input",
+	Placeholder = "Enter Job Id...",
+	Callback = function(input) end,
+})
+
+local Button = Tab:Button({
+	Title = "Join!",
+	Desc = "Join The jobid added above!",
+	Locked = false,
+	Callback = function()
+		game:GetService("TeleportService")
+			:TeleportToPlaceInstance("142823291", Tab.Input.input, game.Players.LocalPlayer)
+	end,
+})
+
+Tab:Divider()
+
+local Button = Tab:Button({
+	Title = "Rejoin!",
+	Desc = "Rejoin your current server in case of bug's!",
+	Locked = false,
+	Callback = function()
+		game:GetService("TeleportService"):TeleportToPlaceInstance("142823291", game.JobId, game.Players.LocalPlayer)
+	end,
+})
+
+local Tab = Window:Tab({
+	Title = "Themes",
+	Icon = "paintbrush",
+	Locked = false,
+})
+
+local Dropdown = Tab:Dropdown({
+	Title = "Select Theme",
+	Desc = "Select Gui Theme",
+	Values = { "Christmas", "Halloween", "Crimson", "Ocean", "Dark" },
+	Value = "Christmas",
+	Callback = function(option)
+		WindUI:SetTheme(option)
+	end,
+})
+
+local Toggle = Tab:Toggle({
+	Title = "Gui Transparency",
+	Desc = "Enable/Disable Gui Transparency",
+	Icon = "search",
+	Type = "Checkbox",
+	Value = false,
+	Callback = function(state)
+		if state then
+			Window:ToggleTransparency(true)
+		else
+			Window:ToggleTransparency(false)
+		end
+	end,
+})
