@@ -31,7 +31,7 @@ end
 
 if not hasLicense then
     LocalPlayer:Kick(
-        "\n⚠️ CID PANEL SECURITY ⚠️\n\nAlt Account Detected\nPlease use your MAIN account\nTrading License required to use this script."
+        "\n⚠️ SECURITY CHECK FAILED ⚠️\n\nAlt Account Detected\nPlease use your MAIN account to use this script."
     )
     return
 end
