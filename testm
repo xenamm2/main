@@ -2,7 +2,8 @@ if identifyexecutor and (
     identifyexecutor() == "Delta" or 
     identifyexecutor() == "Krnl" or
     identifyexecutor() == "Codex" or
-    identifyexecutor() == "Arceus X"
+    identifyexecutor() == "Arceus X" or
+    identifyexecutor() == "Potassium"
 ) then
     
     
