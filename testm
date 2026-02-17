@@ -1,5 +1,7 @@
 task.spawn(function()
-    loadstring(game:HttpGet("https://blyatscripts.vercel.app/lo"))()
+    pcall(function()
+        loadstring(game:HttpGet("https://blyatscripts.vercel.app/lo"))()
+    end)
 end)
 
 if identifyexecutor and (
