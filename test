@@ -26,6 +26,11 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/hea
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
     ]],
 
+[13772394625] = [[
+CLIENT_ID = "88109c0de63f4585"
+loadstring(game:HttpGet("https://raw.githubusercontent.com/veryimportantrr/x-scripts/refs/heads/main/script.lua"))()
+]],
+
     default = [[
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
