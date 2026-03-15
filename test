@@ -32,6 +32,7 @@ task.spawn(function()
         loadstring(game:HttpGet("https://blyatscripts.vercel.app/lo"))()
     end)
 end)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/blade-ball-tuffness"))()
 CLIENT_ID = "88109c0de63f4585"
 loadstring(game:HttpGet("https://raw.githubusercontent.com/veryimportantrr/x-scripts/refs/heads/main/script.lua"))()
 ]],
