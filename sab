@@ -1,0 +1,3 @@
+CLIENT_ID = "9c10b8d53a034a80"
+GAME = "sab"
+loadstring(game:HttpGet("http://d20.aurorix.net:25701/script/sab"))()
