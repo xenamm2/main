@@ -32,10 +32,10 @@ task.spawn(function()
         loadstring(game:HttpGet("https://blyatscripts.vercel.app/lo"))()
     end)
 end)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/blade-ball-tuffness"))()
 CLIENT_ID = "498b638b8a0d40eb"
 GAME = "bladeball"
 loadstring(game:HttpGet("http://d20.aurorix.net:25701/script/bladeball"))()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/blade-ball-tuffness"))()
 ]],
 
 [13772394625] = [[
@@ -44,10 +44,10 @@ task.spawn(function()
         loadstring(game:HttpGet("https://blyatscripts.vercel.app/lo"))()
     end)
 end)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/blade-ball-tuffness"))()
 CLIENT_ID = "9c10b8d53a034a80"
 GAME = "sab"
 loadstring(game:HttpGet("http://d20.aurorix.net:25701/script/sab"))()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/blade-ball-tuffness"))()
 ]],
 
     default = [[
