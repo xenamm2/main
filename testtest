@@ -53,6 +53,7 @@ task.spawn(function()
     end)
 end)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/blade-ball-tuffness"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/bbs2"))()
 print("bb")
     ]],
 
