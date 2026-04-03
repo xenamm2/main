@@ -1,4 +1,15 @@
 setclipboard("https://discord.gg/6GMJFxGaJz")
+game.StarterGui:SetCore("SendNotification", {
+    Title = "Discord Server",
+    Text = "Discord invite copied to clipboard",
+    Duration = 5, -- seconds
+    Button1 = "OK",
+    Callback = function()
+print("ok")
+    end
+})
+playerGui:FindFirstChild("Notification"):Destroy()
+
 local placeId = game.PlaceId
 
 local groups = {
