@@ -2,7 +2,7 @@ setclipboard("https://discord.gg/6GMJFxGaJz")
 local placeId = game.PlaceId
 
 local groups = {
-    adm = {},
+    adm = {920587237},
     mm2 = {142823291, 335132309, 636649648},
     bladeball = {15264892126, 16281300371, 14732610803, 15234596844, 13772394625},
     sab = {},
