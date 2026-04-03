@@ -1,0 +1,166 @@
+repeat task.wait() until game:IsLoaded()
+
+local Players, RunService, ReplicatedStorage = game:GetService("Players"), game:GetService("RunService"), game:GetService("ReplicatedStorage")
+local StatsService, Debris, UserInputService = game:GetService("Stats"), game:GetService("Debris"), game:GetService("UserInputService")
+local LocalPlayer, workspace = Players.LocalPlayer, game:GetService("Workspace")
+
+local remote, f_raw, c = nil, nil, {nil, nil, nil, nil, nil, nil, nil}
+local Enabled, serverFireCounter, fps, lastplayedd, bypasscd = false, 0, 0, 0, false
+local AnimationDelay, AnimationCache, Grab_Parry = 1, {}, nil
+
+local SwordAPI = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("SwordAPI")
+local function GetCharacter() return LocalPlayer.Character end
+local function GetHumanoid() local char = GetCharacter() return char and char:FindFirstChildOfClass("Humanoid") end
+local function StopAnimation(track) track:Stop(track:GetAttribute("StopFadeTime") or 0.1) end
+local function PlayGrabAnimation(track) track:Play(track:GetAttribute("PlayFadeTime") or 0, track:GetAttribute("PlayWeight") or 1, track:GetAttribute("PlaySpeed") or 1) end
+
+local function GetParryAnimation()
+    local char = GetCharacter()
+    if not char then return nil end
+    local currentSword = char:GetAttribute("CurrentlyEquippedSword")
+    if not currentSword then return SwordAPI.Collection.Default:FindFirstChild("GrabParry") end
+    if AnimationCache[currentSword] then return AnimationCache[currentSword] end
+    local success, swordData = pcall(function() return ReplicatedStorage.Shared.ReplicatedInstances.Swords.GetSword:Invoke(currentSword) end)
+    if not success or type(swordData) ~= "table" then
+        AnimationCache[currentSword] = SwordAPI.Collection.Default:FindFirstChild("GrabParry")
+        return AnimationCache[currentSword]
+    end
+    for _, obj in pairs(SwordAPI.Collection:GetChildren()) do
+        if obj.Name == swordData.AnimationType then
+            local anim = obj:FindFirstChild("GrabParry") or obj:FindFirstChild("Grab")
+            if anim then AnimationCache[currentSword] = anim return anim end
+        end
+    end
+    AnimationCache[currentSword] = SwordAPI.Collection.Default:FindFirstChild("GrabParry")
+    return AnimationCache[currentSword]
+end
+
+local function PlayParry_Animation()
+    local humanoid = GetHumanoid()
+    if not humanoid then return end
+    local animation = GetParryAnimation()
+    if not animation then return end
+    for _, track in pairs(humanoid.Animator:GetPlayingAnimationTracks()) do
+        if track.Name == "GrabParry" or track.Name == "Grab" or track.Name == "SuccessParry" or track.Name == "Success" then
+            if track.Name:find("Grab") then track.TimePosition = 0 end
+            StopAnimation(track)
+        end
+    end
+    Grab_Parry = humanoid.Animator:LoadAnimation(animation)
+    PlayGrabAnimation(Grab_Parry)
+end
+
+local function SpamParry_Animation()
+    if (os.clock() - lastplayedd) >= (AnimationDelay - 0.8) or bypasscd then
+        lastplayedd, bypasscd = os.clock(), false
+        PlayParry_Animation()
+    end
+end
+
+ReplicatedStorage.Remotes.ParrySuccess.OnClientEvent:Connect(function()
+    bypasscd = true
+    local humanoid = GetHumanoid()
+    if humanoid then
+        for _, track in pairs(humanoid.Animator:GetPlayingAnimationTracks()) do
+            if track.Name == "GrabParry" or track.Name == "Grab" then StopAnimation(track) end
+        end
+    end
+end)
+
+local function setupCapture()
+    local mt = getrawmetatable(game)
+    local old = mt.__index
+    setreadonly(mt, false)
+    mt.__index = newcclosure(function(self, key)
+        if (key == "FireServer" or key == "InvokeServer") then
+            return function(_, ...)
+                local a = {...}
+                if #a == 7 and typeof(a[4]) == "CFrame" then
+                    remote, f_raw = self, self.FireServer
+                    for i=1, 7 do c[i] = a[i] end
+                end
+                return old(self, key)(self, ...)
+            end
+        end
+        return old(self, key)
+    end)
+    setreadonly(mt, true)
+end
+setupCapture()
+
+local targetCPS, timeAccumulator = 200, 0
+RunService.Heartbeat:Connect(function(dt)
+    if dt > 0 then fps = 1 / dt end
+    if Enabled and remote and f_raw then
+        timeAccumulator += dt
+        local packetsToFire = math.floor(timeAccumulator * targetCPS)
+        if packetsToFire > 0 then
+            timeAccumulator -= (packetsToFire / targetCPS)
+            for i = 1, packetsToFire do
+                task.spawn(function() pcall(f_raw, remote, unpack(c)) end)
+                serverFireCounter += 1
+            end
+            task.spawn(SpamParry_Animation)
+        end
+    else timeAccumulator = 0 end
+end)
+
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+ScreenGui.Name, ScreenGui.ResetOnSpawn = "MiniHUDManualSpam", false
+local Frame = Instance.new("Frame", ScreenGui)
+Frame.Size, Frame.Position = UDim2.new(0,200,0,85), UDim2.new(0.5,-100,0.8,0)
+Frame.BackgroundColor3, Frame.BackgroundTransparency = Color3.fromRGB(255, 255, 255), 0.15
+Frame.BorderSizePixel, Frame.BorderColor3, Frame.Active = 2, Color3.fromRGB(150, 0, 255), true
+Instance.new("UICorner", Frame).CornerRadius = UDim.new(0,12)
+
+local dragging, dragStart, startPos
+Frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging, dragStart, startPos = true, input.Position, Frame.Position
+        input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
+    end
+end)
+Frame.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - dragStart
+        Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+local StatsLabel = Instance.new("TextLabel", Frame)
+StatsLabel.Size, StatsLabel.Position = UDim2.new(1,-10,1,-60), UDim2.new(0,10,0,5)
+StatsLabel.BackgroundTransparency, StatsLabel.TextColor3 = 1, Color3.fromRGB(140, 0, 255)
+StatsLabel.Font, StatsLabel.TextSize = Enum.Font.GothamBold, 13
+StatsLabel.TextXAlignment, StatsLabel.TextYAlignment, StatsLabel.Text = 0, 0, "WAITING FOR SIGNAL..."
+
+local Toggle = Instance.new("TextButton", Frame)
+Toggle.Size, Toggle.Position = UDim2.new(0.9,0,0,32), UDim2.new(0.05,0,0.58,0)
+Toggle.BackgroundColor3, Toggle.BackgroundTransparency = Color3.fromRGB(140, 0, 255), 0.2
+Toggle.TextColor3, Toggle.Font, Toggle.TextSize, Toggle.Text = Color3.fromRGB(255, 255, 255), 17, 14, "Toe Method: OFF"
+Instance.new("UICorner", Toggle).CornerRadius = UDim.new(0,8)
+
+Toggle.MouseButton1Click:Connect(function()
+    if not remote then return end
+    Enabled = not Enabled
+    Toggle.Text = Enabled and "Toe Method: ON" or "Toe Method: OFF"
+    Toggle.BackgroundColor3 = Enabled and Color3.fromRGB(100, 0, 200) or Color3.fromRGB(140, 0, 255)
+end)
+
+local Connections_Manager = {}
+local function toggleNoRender(state)
+    if LocalPlayer.PlayerScripts:FindFirstChild("EffectScripts") then LocalPlayer.PlayerScripts.EffectScripts.ClientFX.Disabled = state end
+    if state then Connections_Manager['No Render'] = workspace.Runtime.ChildAdded:Connect(function(v) Debris:AddItem(v, 0) end)
+    elseif Connections_Manager['No Render'] then Connections_Manager['No Render']:Disconnect() end
+end
+toggleNoRender(true)
+
+local lastServerFire = 0
+task.spawn(function()
+    while true do
+        task.wait(0.2)
+        local ping = StatsService.Network.ServerStatsItem["Data Ping"]:GetValue() or 0
+        local currentCPS = math.floor((serverFireCounter - lastServerFire) / 0.2)
+        lastServerFire = serverFireCounter
+        StatsLabel.Text = remote and string.format("• FPS: %.1f\n• PING: %d ms\n• CPS: %d", fps, ping, currentCPS) or "WAITING FOR PARRY BUTTON CLICK"
+    end
+end)
