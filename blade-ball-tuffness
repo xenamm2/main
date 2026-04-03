@@ -2,7 +2,7 @@ local Fluent = loadstring(game:HttpGet("https://raw.githubusercontent.com/script
 
 local Window = Fluent:CreateWindow({
     Title = "Nebula | Blade Ball",
-    SubTitle = "Made By KingScript | Nickname: Venomz",
+    SubTitle = "Made By Lillilder",
     Search = true,
     Icon = "star",
     TabWidth = 160,
