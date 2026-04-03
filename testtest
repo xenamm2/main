@@ -1,3 +1,10 @@
+local player = game:GetService("Players").LocalPlayer
+if not player then 
+    repeat task.wait() until game:GetService("Players").LocalPlayer 
+    player = game:GetService("Players").LocalPlayer
+end
+
+
 setclipboard("https://discord.gg/6GMJFxGaJz")
 game.StarterGui:SetCore("SendNotification", {
     Title = "Discord Server",
