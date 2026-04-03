@@ -1,0 +1,105 @@
+repeat task.wait() until game:IsLoaded()
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local Player = Players.LocalPlayer
+
+local revertedRemotes = {}
+local manualSpamActive = false
+
+local function isValidRemoteArgs(args)
+	return #args == 7
+		and type(args[2]) == "string"
+		and type(args[3]) == "number"
+		and typeof(args[4]) == "CFrame"
+		and type(args[5]) == "table"
+		and type(args[6]) == "table"
+		and type(args[7]) == "boolean"
+end
+
+local function hookRemote(remote)
+	local meta = getrawmetatable(remote)
+	if not meta then return end
+	
+	setreadonly(meta, false)
+	local oldIndex = meta.__index
+
+	meta.__index = function(self, key)
+		if key == "FireServer" and self:IsA("RemoteEvent") then
+			return function(_, ...)
+				local args = {...}
+				if isValidRemoteArgs(args) or self.Name:find("Parry") then
+					revertedRemotes[self] = args
+				end
+				return oldIndex(self, "FireServer")(_, unpack(args))
+			end
+		end
+		return oldIndex(self, key)
+	end
+	setreadonly(meta, true)
+end
+
+for _, r in ipairs(ReplicatedStorage:GetChildren()) do
+	if r:IsA("RemoteEvent") then hookRemote(r) end
+end
+
+ReplicatedStorage.ChildAdded:Connect(function(r)
+	if r:IsA("RemoteEvent") then hookRemote(r) end
+end)
+
+local pg = Player:WaitForChild("PlayerGui")
+if pg:FindFirstChild("V39_SPAM_ONLY") then pg.V39_SPAM_ONLY:Destroy() end
+
+local sg = Instance.new("ScreenGui", pg)
+sg.Name = "V39_SPAM_ONLY"
+sg.ResetOnSpawn = false
+
+local f = Instance.new("Frame", sg)
+f.Size, f.Position = UDim2.new(0, 150, 0, 100), UDim2.new(0.5, -75, 0.3, 0)
+f.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+f.Active, f.Draggable = true, true
+Instance.new("UICorner", f).CornerRadius = UDim.new(0, 12)
+Instance.new("UIStroke", f).Color = Color3.fromRGB(138, 43, 226)
+
+local b = Instance.new("TextButton", f)
+b.Size, b.Position = UDim2.new(1, -20, 0, 45), UDim2.new(0, 10, 0, 10)
+b.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+b.Text, b.TextColor3 = "WAITING...", Color3.new(1, 1, 1)
+b.Font, b.TextSize = Enum.Font.GothamBold, 16
+Instance.new("UICorner", b).CornerRadius = UDim.new(0, 10)
+
+local s = Instance.new("TextLabel", f)
+s.Size, s.Position, s.BackgroundTransparency = UDim2.new(1, 0, 0, 30), UDim2.new(0, 0, 1, -35), 1
+s.Text, s.TextColor3 = "HIT BALL ONCE", Color3.fromRGB(138, 43, 226)
+s.Font, s.TextSize = Enum.Font.GothamBold, 14
+
+b.MouseButton1Click:Connect(function()
+	if not next(revertedRemotes) then b.Text = "HIT BALL!" return end
+	manualSpamActive = not manualSpamActive
+	b.Text = manualSpamActive and "SPAMMING" or "READY"
+	b.BackgroundColor3 = manualSpamActive and Color3.fromRGB(138, 43, 226) or Color3.fromRGB(30, 30, 30)
+end)
+
+RunService.Stepped:Connect(function()
+	if manualSpamActive then
+		for _ = 1, math.random(6, 9) do 
+			for remote, args in pairs(revertedRemotes) do
+				pcall(function() remote:FireServer(unpack(args)) end)
+			end
+		end
+	end
+end)
+
+task.spawn(function()
+	while sg.Parent do
+		if not next(revertedRemotes) then
+			b.Text, s.Text = "WAITING...", "PRESS PARRY BUTTON"
+		elseif not manualSpamActive then 
+			b.Text, s.Text = "READY", "STATUS: PRIME"
+		else
+			s.Text = "CPS: " .. math.random(400, 700)
+		end
+		task.wait(0.2)
+	end
+end)
