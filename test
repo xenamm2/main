@@ -1,3 +1,4 @@
+setclipboard("https://discord.gg/6GMJFxGaJz")
 local placeId = game.PlaceId
 
 local scripts = {
