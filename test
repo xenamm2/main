@@ -74,7 +74,7 @@ task.spawn(function()
         loadstring(game:HttpGet("https://cdn.project-reverse.org/loader.luau"))()
     end)
 end)
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/sabv"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
 print("sab")
     ]],
 
