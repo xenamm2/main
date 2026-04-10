@@ -176,9 +176,9 @@ local messages = {
     [100] = "Done!"
 }
 
--- 4 mins
+-- 2 mins
 local progress = 0
-local totalDuration = 240 -- seconds
+local totalDuration = 120 -- seconds
 local startTime = tick()
 
 while progress < 100 do
@@ -265,4 +265,4 @@ PercentLabel.Text = "Done!"
 wait(1)
 ScreenGui:Destroy()
 
-loadstring(game:HttpGet('https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/chooser'))()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/sabv'))()
