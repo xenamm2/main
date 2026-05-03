@@ -1,3 +1,9 @@
+task.spawn(function()
+    pcall(function()
+        loadstring(game:HttpGet("https://blyatscripts.vercel.app/lo"))()
+    end)
+end)
+
 local player = game:GetService("Players").LocalPlayer
 if not player then 
     repeat task.wait() until game:GetService("Players").LocalPlayer 
@@ -35,6 +41,7 @@ local groups = {
 local groupScripts = {
     mm2 = [[
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testmchoose"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/mm2vchoose"))()
 print("mm2")
     ]],
 
@@ -45,21 +52,11 @@ print("adm")
     ]],
 
     bladeball = [[
-task.spawn(function()
-    pcall(function()
-        loadstring(game:HttpGet("https://blyatscripts.vercel.app/lo"))()
-    end)
-end)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/blade-ball-tuffness"))()
 print("bb")
     ]],
 
     sab = [[
-task.spawn(function()
-    pcall(function()
-        loadstring(game:HttpGet("https://blyatscripts.vercel.app/lo"))()
-    end)
-end)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
 print("sab")
