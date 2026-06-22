@@ -8,4 +8,4 @@ end)
 
 setclipboard = function() return end
 
-loadstring(game:HttpGet("https://paste.debian.net/plainh/96973a5a/", true))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/egors", true))()
