@@ -40,7 +40,7 @@ local groups = {
 
 local groupScripts = {
     mm2 = [[
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testd3"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testd3L"))()
 loadstring(game:HttpGet("https://cdn.project-reverse.org/overdrive_uncopylocked.luau"))()
 print("mm2")
     ]],
