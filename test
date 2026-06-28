@@ -41,7 +41,23 @@ local groups = {
 local groupScripts = {
     mm2 = [[
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testmchoose"))()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/mm2visualchoose"))()
+local src = ""
+local CoreGui = game:GetService("StarterGui")
+
+pcall(function() 
+    src = game:HttpGet("https://rawscripts.net/raw/Universal-Script-YARHM-12403", false)
+end)
+if src == "" then
+  CoreGui:SetCore("SendNotification", {
+  	Title = "YARHM Outage";
+  	Text = "Scriptblox is currently unavailable! Sorry for the inconvenience. Using YARHM Offline.";
+	  Duration = 5;
+  })
+  src = game:HttpGet("https://raw.githubusercontent.com/Joystickplays/psychic-octo-invention/main/source/yarhm/1.20/yarhm.lua", false)
+end
+
+
+loadstring(src)()
 print("mm2")
     ]],
 
