@@ -4,6 +4,8 @@ if _G.__ZovlaneLoaderUnload then pcall(_G.__ZovlaneLoaderUnload) end
 
 local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
 
 local function nukeWindUIRoot()
     pcall(function()
@@ -30,42 +32,6 @@ local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/hoodra
 pcall(function() WindUI:SetTheme("Dark") end)
 pcall(function() WindUI:SetFont("rbxasset://fonts/families/GothamSSm.json") end)
 
-local UserInputService = game:GetService("UserInputService")
-local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
-
-local Window = WindUI:CreateWindow({
-    Title = "Zovlane Loader",
-    Folder = "ZovlaneLoader",
-    OpenButton = {Enabled = false},
-    Size = isMobile and UDim2.new(0, 230, 0, 290) or UDim2.new(0, 580, 0, 460),
-})
-Window:Close()
-
-local function fetchImageAsset(url, name)
-    local req = http_request or request or (syn and syn.request)
-    if not (req and writefile and getcustomasset) then return nil end
-    local ok, result = pcall(function()
-        local res = req({Url = url, Method = "GET", Headers = {
-            ["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-            ["Accept"] = "image/png,image/jpeg,image/*",
-            ["Cache-Control"] = "no-cache",
-        }})
-        if not res or not res.Body or #res.Body < 100 then return nil end
-        if res.Body:sub(1, 5):lower():find("<!doc") then return nil end
-        -- use timestamp in filename to bust getcustomasset cache
-        local fileName = "ZovlaneLoader_" .. name .. "_" .. math.floor(tick()) .. ".png"
-        writefile(fileName, res.Body)
-        return getcustomasset(fileName)
-    end)
-    if ok and result and result ~= "" then return result end
-    return nil
-end
-
-local thumbnailAsset = fetchImageAsset(
-    "https://i.pinimg.com/736x/e3/a8/11/e3a811c5bbd60d86f81f02372995866a.jpg",
-    "zovavatar"
-)
-
 local function notify(title, text)
     pcall(function()
         game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -77,12 +43,17 @@ end
 local function loadScript(name, url, key)
     task.defer(function()
         notify(name, "Loading...")
-        nukeWindUIRoot()
         getgenv().SCRIPT_KEY = key or "KEYLESS"
-        local ok, err = pcall(function()
-            loadstring(game:HttpGet(url))()
+        local ok, result = pcall(function()
+            return game:HttpGet(url)
         end)
-        if not ok then notify(name, "Failed: " .. tostring(err)) end
+        if ok and result then
+            nukeWindUIRoot()
+            local runOk, runErr = pcall(loadstring(result))
+            if not runOk then notify(name, "Failed: " .. tostring(runErr)) end
+        else
+            notify(name, "Failed: " .. tostring(result))
+        end
     end)
 end
 
@@ -92,76 +63,103 @@ local accentSeq = ColorSequence.new({
     ColorSequenceKeypoint.new(1,   Color3.fromRGB(255, 190, 230)),
 })
 
+-- Open popup instantly with zero window flicker
 WindUI:Popup({
     Title = "Zovlane Hub",
     Icon = "sparkles",
-    Thumbnail = thumbnailAsset and {Image = thumbnailAsset, Title = "ZOVLANE"} or nil,
+    Thumbnail = {Image = "rbxassetid://0", Title = "ZOVLANE"},
     Content = "<font color=\"#ff80b5\"><b>All scripts are keyless.</b></font>"
         .. "<br /><br />"
         .. "<b>✨  Full Hub</b><br />"
         .. "<font color=\"#aaaacc\">  Silent aim · ESP · autofarm · coin grab</font>"
         .. "<br /><br />"
-        .. "<b>🔫  Spawner</b><br />"
-        .. "<font color=\"#aaaacc\">  Spawn or dupe any knife and gun</font>",
+        .. "<b>🌾  Autofarm</b><br />"
+        .. "<font color=\"#aaaacc\">  Automated background coin & level farming</font>",
     Buttons = {
         {
             Title = "Full Hub", Icon = "star", Variant = "Primary",
             Callback = function()
                 loadScript(
                     "Zovlane Hub",
-                    "https://raw.githubusercontent.com/Joystickplays/psychic-octo-invention/main/source/yarhm/1.20/yarhm.lua"
+                    "https://raw.githubusercontent.com/Joystickplays/psychic-octo-invention/main/source/yarhm/1.20/yarhm.lua",
+                    "KEYLESS"
                 )
             end,
         },
         {
-            Title = "Spawner", Icon = "sword", Variant = "Secondary",
+            Title = "Autofarm", Icon = "sword", Variant = "Secondary",
             Callback = function()
                 loadScript(
                     "Autofarm",
-                    "https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/af"
+                    "https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/af",
+                    "KEYLESS"
                 )
             end,
         },
     },
 })
 
-do
+-- Asynchronously fetch & apply thumbnail image without stalling UI
+task.spawn(function()
+    local req = http_request or request or (syn and syn.request)
+    local assetUri = nil
+    local fileName = "ZovlaneLoader_zovavatar.png"
+    
+    if req and writefile and getcustomasset then
+        local ok, res = pcall(function()
+            return req({
+                Url = "https://wsrv.nl/?url=i.pinimg.com/736x/e3/a8/11/e3a811c5bbd60d86f81f02372995866a.jpg",
+                Method = "GET"
+            })
+        end)
+        if ok and res and res.Body and #res.Body > 1000 and not res.Body:lower():find("<html") then
+            writefile(fileName, res.Body)
+            assetUri = getcustomasset(fileName)
+        elseif isfile and isfile(fileName) then
+            assetUri = getcustomasset(fileName)
+        end
+    end
+
     local rg = CoreGui:FindFirstChild("RobloxGui")
     local popups = rg and rg:FindFirstChild("WindUI") and rg.WindUI:FindFirstChild("Popups")
-    if popups then
+    if not popups then return end
+
+    if assetUri then
         for _, c in ipairs(popups:GetDescendants()) do
-            if c:IsA("UIGradient") and c.Parent:IsA("UIStroke") then
-                c.Color = accentSeq
+            if c:IsA("ImageLabel") and c.Image == "rbxassetid://0" then
+                c.Image = assetUri
+                local corner = c:FindFirstChildOfClass("UICorner") or Instance.new("UICorner", c)
+                corner.CornerRadius = UDim.new(0, 26)
+                break
             end
         end
     end
-end
 
-do
-    local rg = CoreGui:FindFirstChild("RobloxGui")
-    local popups = rg and rg:FindFirstChild("WindUI") and rg.WindUI:FindFirstChild("Popups")
-    local mainContainer = popups and popups:FindFirstChild("ImageLabel")
-    local uiScale = mainContainer and mainContainer:FindFirstChildOfClass("UIScale")
-    if mainContainer and uiScale then
-        local RunService = game:GetService("RunService")
-        local elapsed = 0
-        local conn
-        conn = RunService.RenderStepped:Connect(function(dt)
-            elapsed += dt
-            mainContainer.Rotation = 0
-            mainContainer.ImageTransparency = 0
-            uiScale.Scale = 1
-            if elapsed > 0.5 or not mainContainer.Parent then
-                conn:Disconnect()
-            end
-        end)
+    for _, c in ipairs(popups:GetDescendants()) do
+        if c:IsA("TextLabel") and c.Text == "ZOVLANE" then
+            c.AnchorPoint = Vector2.new(0.5, 1)
+            c.Position = UDim2.new(0.5, 0, 1, -12)
+            c.TextColor3 = Color3.fromRGB(255, 160, 200)
+            c.Font = Enum.Font.GothamBold
+            break
+        end
     end
-end
+end)
 
-do
+-- Gradient styling & Exit Button setup
+task.defer(function()
+    task.wait(0.1)
     local rg = CoreGui:FindFirstChild("RobloxGui")
     local popups = rg and rg:FindFirstChild("WindUI") and rg.WindUI:FindFirstChild("Popups")
-    local mainContainer = popups and popups:FindFirstChild("ImageLabel")
+    if not popups then return end
+
+    for _, c in ipairs(popups:GetDescendants()) do
+        if c:IsA("UIGradient") and c.Parent:IsA("UIStroke") then
+            c.Color = accentSeq
+        end
+    end
+
+    local mainContainer = popups:FindFirstChild("ImageLabel")
     if mainContainer then
         local exitBtn = Instance.new("TextButton")
         exitBtn.Size = UDim2.fromOffset(28, 28)
@@ -169,7 +167,7 @@ do
         exitBtn.Position = UDim2.new(1, -14, 0, 14)
         exitBtn.BackgroundColor3 = Color3.fromRGB(220, 60, 120)
         exitBtn.BackgroundTransparency = 0.25
-        exitBtn.Text = "\226\156\149"
+        exitBtn.Text = "✕"
         exitBtn.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold)
         exitBtn.TextSize = 15
         exitBtn.TextColor3 = Color3.new(1, 1, 1)
@@ -205,33 +203,11 @@ do
             })
         end)
     end
-end
+end)
 
-if thumbnailAsset then
-    local rg = CoreGui:FindFirstChild("RobloxGui")
-    local popups = rg and rg:FindFirstChild("WindUI") and rg.WindUI:FindFirstChild("Popups")
-    if popups then
-        for _, c in ipairs(popups:GetDescendants()) do
-            if c:IsA("UICorner") and c.Parent:IsA("ImageLabel") and c.Parent.Image == thumbnailAsset then
-                c.CornerRadius = UDim.new(0, 26)
-                break
-            end
-        end
-        for _, c in ipairs(popups:GetDescendants()) do
-            if c:IsA("TextLabel") and c.Text == "ZOVLANE" then
-                c.AnchorPoint = Vector2.new(0.5, 1)
-                c.Position = UDim2.new(0.5, 0, 1, -12)
-                c.TextColor3 = Color3.fromRGB(255, 160, 200)
-                c.Font = Enum.Font.GothamBold
-                break
-            end
-        end
-    end
-end
-
--- reposition buttons to the right side, past the image
+-- Position buttons past the image
 task.spawn(function()
-    task.wait(0.5)
+    task.wait(0.3)
     local rg = CoreGui:FindFirstChild("RobloxGui")
     local popups = rg and rg:FindFirstChild("WindUI") and rg.WindUI:FindFirstChild("Popups")
     if not popups then return end
@@ -274,7 +250,8 @@ local function findButtonByLabel(root, label)
     return nil
 end
 
-for _, label in ipairs({"Autofarm", "Full Hub", "Spawner"}) do
+-- Hover sound bindings
+for _, label in ipairs({"Full Hub", "Autofarm"}) do
     task.spawn(function()
         local target
         for _ = 1, 30 do
@@ -296,13 +273,14 @@ for _, label in ipairs({"Autofarm", "Full Hub", "Spawner"}) do
     end)
 end
 
+-- Custom tooltips
 local overlaySG = Instance.new("ScreenGui")
 overlaySG.Name = "ZovlaneLoaderTooltips"
 overlaySG.DisplayOrder = 10000
 overlaySG.IgnoreGuiInset = true
 local okOverlay = pcall(function() overlaySG.Parent = CoreGui end)
 if not okOverlay or not overlaySG.Parent then
-    pcall(function() overlaySG.Parent = game.Players.LocalPlayer.PlayerGui end)
+    pcall(function() overlaySG.Parent = Players.LocalPlayer.PlayerGui end)
 end
 
 local function makeTooltip(text)
@@ -344,7 +322,7 @@ end
 
 local TOOLTIP_TEXT = {
     ["Full Hub"] = "Silent aim, ESP, autofarm and coin grabbers — the full Zovlane menu.",
-    Spawner    = "Spawn or dupe any knife and gun. Full godly and chroma list.",
+    ["Autofarm"] = "Automated background coin & level farming.",
 }
 
 for label, text in pairs(TOOLTIP_TEXT) do
