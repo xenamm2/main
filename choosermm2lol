@@ -40,19 +40,15 @@ local function notify(title, text)
     end)
 end
 
-local function loadScript(name, url, key)
+local function loadScript(name, url)
     task.defer(function()
         notify(name, "Loading...")
-        getgenv().SCRIPT_KEY = key or "KEYLESS"
-        local ok, result = pcall(function()
-            return game:HttpGet(url)
+        nukeWindUIRoot()
+        local ok, err = pcall(function()
+            loadstring(game:HttpGet(url))()
         end)
-        if ok and result then
-            nukeWindUIRoot()
-            local runOk, runErr = pcall(loadstring(result))
-            if not runOk then notify(name, "Failed: " .. tostring(runErr)) end
-        else
-            notify(name, "Failed: " .. tostring(result))
+        if not ok then 
+            notify(name, "Failed: " .. tostring(err)) 
         end
     end)
 end
@@ -63,7 +59,7 @@ local accentSeq = ColorSequence.new({
     ColorSequenceKeypoint.new(1,   Color3.fromRGB(255, 190, 230)),
 })
 
--- Open popup instantly with zero window flicker
+-- Open popup instantly
 WindUI:Popup({
     Title = "Zovlane Hub",
     Icon = "sparkles",
@@ -81,8 +77,7 @@ WindUI:Popup({
             Callback = function()
                 loadScript(
                     "Zovlane Hub",
-                    "https://raw.githubusercontent.com/Joystickplays/psychic-octo-invention/main/source/yarhm/1.20/yarhm.lua",
-                    "KEYLESS"
+                    "https://raw.githubusercontent.com/Joystickplays/psychic-octo-invention/main/source/yarhm/1.20/yarhm.lua"
                 )
             end,
         },
@@ -91,15 +86,14 @@ WindUI:Popup({
             Callback = function()
                 loadScript(
                     "Autofarm",
-                    "https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/af",
-                    "KEYLESS"
+                    "https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/af"
                 )
             end,
         },
     },
 })
 
--- Asynchronously fetch & apply thumbnail image without stalling UI
+-- Fetch & apply thumbnail image without stalling UI
 task.spawn(function()
     local req = http_request or request or (syn and syn.request)
     local assetUri = nil
@@ -146,7 +140,7 @@ task.spawn(function()
     end
 end)
 
--- Gradient styling & Exit Button setup
+-- Gradient styling & Exit Button
 task.defer(function()
     task.wait(0.1)
     local rg = CoreGui:FindFirstChild("RobloxGui")
@@ -273,7 +267,7 @@ for _, label in ipairs({"Full Hub", "Autofarm"}) do
     end)
 end
 
--- Custom tooltips
+-- Tooltip Overlay
 local overlaySG = Instance.new("ScreenGui")
 overlaySG.Name = "ZovlaneLoaderTooltips"
 overlaySG.DisplayOrder = 10000
